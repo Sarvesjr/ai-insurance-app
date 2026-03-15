@@ -82,53 +82,7 @@ ai_insurance_app
 | **Computer Vision**  | Damage analysis       |
 | **HTML / CSS / JS**  | Frontend UI           |
 | **Git & GitHub**     | Version control       |
-
 ---
-
-# 🚀 How to Run the Project
-
-### 1️⃣ Clone the repository
-
-```
-git clone https://github.com/Sarvesjr/ai-insurance-app.git
-```
-
-### 2️⃣ Navigate to the project
-
-```
-cd ai-insurance-app
-```
-
-### 3️⃣ Install dependencies
-
-```
-pip install -r requirements.txt
-```
-
-### 4️⃣ Train the model
-
-```
-python train_model.py
-```
-
-### 5️⃣ Run the application
-
-```
-python main.py
-```
-
-### 6️⃣ Open the frontend
-
-Open:
-
-```
-frontend.html
-```
-
-in your browser.
-
----
-
 # 📊 Future Improvements
 
 🔹 Deep Learning damage detection
