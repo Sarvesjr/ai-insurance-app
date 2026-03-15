@@ -1,15 +1,13 @@
-def estimate_payout(annual_premium, damage_percent, severity, claim_probability):
-    insured_value = annual_premium * 8
-    multipliers = {"MINOR": 0.3, "MODERATE": 0.6, "SEVERE": 0.9}
-    multiplier = multipliers.get(severity, 0.5)
-    raw_payout = insured_value * (damage_percent / 100) * multiplier
-    adjusted_payout = raw_payout * claim_probability
-    deductible = adjusted_payout * 0.05
-    final_payout = adjusted_payout - deductible
-    return {
-        "insured_value": round(insured_value, 2),
-        "raw_payout": round(raw_payout, 2),
-        "deductible": round(deductible, 2),
-        "final_payout": round(final_payout, 2),
-        "payout_percentage": round((final_payout / insured_value) * 100, 1)
-    }
+def estimate_cost(severity):
+
+    if severity == "Minor Dent":
+        return "Estimated Repair Cost: $100 - $500"
+
+    elif severity == "Moderate Damage":
+        return "Estimated Repair Cost: $500 - $2500"
+
+    elif severity == "Severe Accident":
+        return "Estimated Repair Cost: $2500 - $10000"
+
+    else:
+        return "Unable to estimate cost"
