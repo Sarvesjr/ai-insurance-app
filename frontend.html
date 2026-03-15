@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#6324eb",
+          "background-light": "#f6f6f8",
+          "background-dark": "#0f172a",
+          "navy-custom": "#120e1b",
+          "slate-custom": "#654d99"
+        },
+        fontFamily: { "display": ["Public Sans", "sans-serif"] },
+        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+<title>InsureAI - AI-Powered Car Insurance</title>
+<style>
+  body { font-family: 'Public Sans', sans-serif; }
+  .page { display: none; }
+  .page.active { display: block; }
+</style>
+</head>
+<body class="bg-background-light font-display text-slate-900 min-h-screen">
+
+<!-- ==================== PAGE 1: HOME ==================== -->
+<div id="page-home" class="page active">
+  <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <!-- Header -->
+    <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-6 md:px-20 py-4 bg-white backdrop-blur-md sticky top-0 z-50">
+      <div class="flex items-center gap-3 text-primary">
+        <div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+          <span class="material-symbols-outlined !text-2xl">auto_awesome</span>
+        </div>
+        <h2 class="text-slate-900 text-xl font-bold leading-tight tracking-tight">InsureAI</h2>
+      </div>
+      <div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
+        <nav class="hidden md:flex items-center gap-8">
+          <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+          <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">Services</a>
+          <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
+          <a class="text-slate-600 text-sm font-medium hover:text-primary transition-colors" href="#">Contact</a>
+        </nav>
+        <button onclick="showPage('page-form')" class="flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-primary/20">
+          Get Started
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <!-- Hero Section -->
+      <section class="max-w-7xl mx-auto px-6 py-12 md:py-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div class="flex flex-col gap-8 order-2 lg:order-1">
+            <div class="flex flex-col gap-4">
+              <span class="text-primary font-bold tracking-widest text-xs uppercase">Future of Insurance</span>
+              <h1 class="text-slate-900 text-4xl md:text-6xl font-black leading-[1.1] tracking-tight">
+                AI-Powered Car Insurance Claim Assessment
+              </h1>
+              <p class="text-slate-600 text-lg md:text-xl font-normal leading-relaxed max-w-lg">
+                Upload damage photos and get instant claim predictions. No more waiting days for an adjuster.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-4">
+              <button onclick="showPage('page-form')" class="flex min-w-[200px] cursor-pointer items-center justify-center rounded-xl h-14 px-8 bg-primary text-white text-lg font-bold transition-all hover:translate-y-[-2px] hover:shadow-xl hover:shadow-primary/30 active:scale-95">
+                Start Claim Assessment
+              </button>
+              <button class="flex min-w-[160px] cursor-pointer items-center justify-center rounded-xl h-14 px-8 bg-transparent border-2 border-slate-200 text-slate-700 text-lg font-bold transition-all hover:bg-slate-50">
+                How it Works
+              </button>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-slate-500">
+              <div class="flex -space-x-2">
+                <div class="w-8 h-8 rounded-full bg-slate-300 border-2 border-white"></div>
+                <div class="w-8 h-8 rounded-full bg-slate-400 border-2 border-white"></div>
+                <div class="w-8 h-8 rounded-full bg-slate-500 border-2 border-white"></div>
+              </div>
+              <span>Trusted by 10k+ car owners</span>
+            </div>
+          </div>
+          <div class="order-1 lg:order-2">
+            <div class="relative group">
+              <div class="absolute -inset-1 bg-gradient-to-r from-primary to-indigo-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+              <div class="relative bg-white p-2 rounded-2xl shadow-2xl overflow-hidden aspect-video flex items-center justify-center">
+                <div class="w-full h-full rounded-xl bg-slate-100 flex items-center justify-center relative" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCuH7fCvZNh9YZSTzWN_6-nvc00CrKhtPBCxq1vUQUIdKjJ3Fqo7IClalNXLq-Rv1TNRm0u6GnjwpOwLhPh_TYvheRFiXGc5vj_pP6C1Wl2WNcBmO1GyFkcWMjnRRXvtdXYR1oXsRckQzvFgKBjuW_eXPzn1o3fzwZa4m_pc2ug7QXE52R8ic1nyaxuDMfcDBkKFTrYXKtAktOFHJiKnuSv14fp8Sgh-UJgk8oi6dT18nbtuOUrHsTXdAs73b_3w0TYAjjIAjzMKag'); background-size: cover; background-position: center;">
+                  <div class="absolute inset-0 bg-primary/10"></div>
+                  <div class="absolute top-4 right-4 bg-white/90 p-3 rounded-lg shadow-lg flex items-center gap-3 border border-primary/20">
+                    <div class="size-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="text-xs font-bold text-slate-800">Analyzing Surface... 88%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="bg-white py-20">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-16 flex flex-col items-center gap-4">
+            <h2 class="text-slate-900 text-3xl md:text-4xl font-bold tracking-tight">Our Key Features</h2>
+            <div class="h-1.5 w-20 bg-primary rounded-full"></div>
+            <p class="text-slate-600 max-w-2xl text-lg">Leveraging advanced computer vision and machine learning to simplify the insurance process.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="group flex flex-col gap-6 p-8 rounded-2xl border border-slate-100 bg-background-light/50 hover:bg-white transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
+              <div class="size-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <span class="material-symbols-outlined !text-3xl">image_search</span>
+              </div>
+              <div class="flex flex-col gap-3">
+                <h3 class="text-slate-900 text-xl font-bold">AI Image Analysis</h3>
+                <p class="text-slate-600 leading-relaxed">Advanced algorithms analyze every pixel of damage, identifying dents, scratches, and structural issues with high accuracy.</p>
+              </div>
+            </div>
+            <div class="group flex flex-col gap-6 p-8 rounded-2xl border border-slate-100 bg-background-light/50 hover:bg-white transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
+              <div class="size-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <span class="material-symbols-outlined !text-3xl">bolt</span>
+              </div>
+              <div class="flex flex-col gap-3">
+                <h3 class="text-slate-900 text-xl font-bold">Instant Prediction</h3>
+                <p class="text-slate-600 leading-relaxed">Get your estimated claim value in seconds. No more waiting weeks for traditional manual assessments.</p>
+              </div>
+            </div>
+            <div class="group flex flex-col gap-6 p-8 rounded-2xl border border-slate-100 bg-background-light/50 hover:bg-white transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
+              <div class="size-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <span class="material-symbols-outlined !text-3xl">balance</span>
+              </div>
+              <div class="flex flex-col gap-3">
+                <h3 class="text-slate-900 text-xl font-bold">Fair Assessment</h3>
+                <p class="text-slate-600 leading-relaxed">Bias-free evaluations based on real-time market data and local labor rates for guaranteed fairness.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="py-24 px-6">
+        <div class="max-w-4xl mx-auto rounded-3xl bg-slate-900 p-8 md:p-16 text-center relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-8 opacity-10">
+            <span class="material-symbols-outlined !text-[200px] text-primary rotate-12">shield_with_heart</span>
+          </div>
+          <div class="relative z-10 flex flex-col items-center gap-8">
+            <h2 class="text-white text-3xl md:text-5xl font-black tracking-tight max-w-2xl">Ready to assess your claim?</h2>
+            <p class="text-slate-300 text-lg md:text-xl max-w-xl">Join thousands of users getting faster payouts and simpler insurance experiences today.</p>
+            <button onclick="showPage('page-form')" class="flex min-w-[240px] cursor-pointer items-center justify-center rounded-xl h-16 px-10 bg-primary text-white text-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/40">
+              <span class="material-symbols-outlined mr-2">upload_file</span>
+              Start Now
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-8">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-2 text-primary">
+              <span class="material-symbols-outlined !text-2xl">auto_awesome</span>
+              <h2 class="text-slate-900 text-xl font-bold">InsureAI</h2>
+            </div>
+            <p class="text-slate-500 text-sm leading-relaxed">Revolutionizing the insurance industry through transparency and speed. AI at your service.</p>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h4 class="text-slate-900 font-bold">Product</h4>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Features</a>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Pricing</a>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Enterprise</a>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h4 class="text-slate-900 font-bold">Company</h4>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">About Us</a>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Careers</a>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Press</a>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h4 class="text-slate-900 font-bold">Legal</h4>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Privacy Policy</a>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Terms of Service</a>
+            <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Contact Support</a>
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-slate-100">
+          <p class="text-slate-500 text-sm">© 2024 InsureAI. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: FORM ==================== -->
+<div id="page-form" class="page">
+  <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+    <!-- Header -->
+    <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-6 md:px-20 py-3 bg-white sticky top-0 z-50">
+      <div class="flex items-center gap-4 text-primary">
+        <div class="size-8 flex items-center justify-center">
+          <span class="material-symbols-outlined text-3xl">shield_with_heart</span>
+        </div>
+        <h2 class="text-slate-900 text-xl font-bold leading-tight tracking-tight">InsureAI</h2>
+      </div>
+      <button onclick="showPage('page-home')" class="text-primary text-sm font-medium hover:underline flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Home
+      </button>
+    </header>
+
+    <main class="px-6 md:px-20 lg:px-40 flex flex-1 justify-center py-8">
+      <div class="flex flex-col max-w-[960px] flex-1">
+        <!-- Breadcrumbs -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <a onclick="showPage('page-home')" class="text-primary text-base font-medium leading-normal hover:underline cursor-pointer">Dashboard</a>
+          <span class="text-slate-400 text-base font-medium leading-normal">/</span>
+          <span class="text-slate-900 text-base font-medium leading-normal">New Claim Assessment</span>
+        </div>
+        <!-- Page Title -->
+        <div class="flex flex-col gap-2 mb-8">
+          <h1 class="text-slate-900 tracking-tight text-3xl md:text-4xl font-bold leading-tight">Claim Assessment Form</h1>
+          <p class="text-slate-500 text-base font-normal">Complete the form below. Our AI engine will analyze the details and provide an instant damage prediction.</p>
+        </div>
+
+        <div class="space-y-12">
+          <!-- Section A: Personal Details -->
+          <section>
+            <div class="flex items-center gap-2 mb-6 border-b border-slate-200 pb-2">
+              <span class="material-symbols-outlined text-primary">person</span>
+              <h2 class="text-slate-900 text-2xl font-bold">Section A - Personal Details</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Full Name</span>
+                <input id="name" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="e.g. Johnathan Smith" type="text"/>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Age</span>
+                <input id="age" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" max="100" min="18" placeholder="18-100" type="number"/>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Gender</span>
+                <select id="gender" class="form-select rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4">
+                  <option value="1">Male</option>
+                  <option value="0">Female</option>
+                </select>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Phone Number</span>
+                <input id="phone" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="+91 00000 00000" type="tel"/>
+              </label>
+              <label class="flex flex-col gap-2 md:col-span-2">
+                <span class="text-slate-700 text-sm font-semibold">Driving License Number</span>
+                <input id="license_no" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="DL-XXXXXXXXXXXXX" type="text"/>
+              </label>
+              <div class="flex flex-col gap-3 justify-center">
+                <span class="text-slate-700 text-sm font-semibold">Driving License Valid?</span>
+                <div class="flex items-center gap-4">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input checked class="form-radio text-primary focus:ring-primary size-5" name="driving_license" type="radio" value="1"/>
+                    <span class="ml-2">Yes</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input class="form-radio text-primary focus:ring-primary size-5" name="driving_license" type="radio" value="0"/>
+                    <span class="ml-2">No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section B: Vehicle Details -->
+          <section>
+            <div class="flex items-center gap-2 mb-6 border-b border-slate-200 pb-2">
+              <span class="material-symbols-outlined text-primary">directions_car</span>
+              <h2 class="text-slate-900 text-2xl font-bold">Section B - Vehicle Details</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Vehicle Make</span>
+                <input id="vehicle_make" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="e.g. Toyota" type="text"/>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Vehicle Model</span>
+                <input id="vehicle_model" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="e.g. Fortuner" type="text"/>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Vehicle Age</span>
+                <select id="vehicle_age" class="form-select rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4">
+                  <option value="0">Less than 1 Year</option>
+                  <option value="1">1-2 Years</option>
+                  <option value="2">More than 2 Years</option>
+                </select>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Annual Premium (INR)</span>
+                <input id="annual_premium" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="₹ 35000" type="number"/>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Region Code</span>
+                <input id="region_code" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="e.g. 28" value="28" type="number"/>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Vintage (Days with Company)</span>
+                <input id="vintage" class="form-input rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4" placeholder="e.g. 150" value="150" type="number"/>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-slate-700 text-sm font-semibold">Policy Sales Channel</span>
+                <select id="policy_sales_channel" class="form-select rounded-lg border-slate-300 bg-white focus:border-primary focus:ring-primary h-12 px-4">
+                  <option value="26">Agent</option>
+                  <option value="124">Direct</option>
+                  <option value="160">Broker</option>
+                  <option value="152">Online</option>
+                </select>
+              </label>
+              <div class="flex flex-col gap-3 justify-center">
+                <span class="text-slate-700 text-sm font-semibold">Previously Insured?</span>
+                <div class="flex items-center gap-4">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input checked class="form-radio text-primary focus:ring-primary size-5" name="previously_insured" type="radio" value="1"/>
+                    <span class="ml-2">Yes</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input class="form-radio text-primary focus:ring-primary size-5" name="previously_insured" type="radio" value="0"/>
+                    <span class="ml-2">No</span>
+                  </label>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3 justify-center">
+                <span class="text-slate-700 text-sm font-semibold">Vehicle Damage History?</span>
+                <div class="flex items-center gap-4">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input class="form-radio text-primary focus:ring-primary size-5" name="vehicle_damage" type="radio" value="1"/>
+                    <span class="ml-2">Yes</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input checked class="form-radio text-primary focus:ring-primary size-5" name="vehicle_damage" type="radio" value="0"/>
+                    <span class="ml-2">No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section C: Damage Evidence -->
+          <section>
+            <div class="flex items-center gap-2 mb-6 border-b border-slate-200 pb-2">
+              <span class="material-symbols-outlined text-primary">add_a_photo</span>
+              <h2 class="text-slate-900 text-2xl font-bold">Section C - Damage Evidence</h2>
+            </div>
+            <div class="space-y-4">
+              <div id="upload-area" onclick="document.getElementById('damage_image').click()" class="flex flex-col items-center justify-center w-full min-h-[300px] border-2 border-dashed border-slate-300 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer group">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <span class="material-symbols-outlined text-primary text-6xl mb-4 group-hover:scale-110 transition-transform">cloud_upload</span>
+                  <p class="mb-2 text-lg font-bold text-slate-700">Upload Vehicle Damage Photo</p>
+                  <p class="text-sm text-slate-500 text-center px-4">Clear photos help AI assess damage accurately.<br/>Supported formats: JPG, PNG (Max 5MB)</p>
+                </div>
+              </div>
+              <input class="hidden" id="damage_image" type="file" accept="image/*" onchange="previewImage(this)"/>
+              <div id="image-preview" class="hidden">
+                <img id="preview-img" class="max-h-64 rounded-xl mx-auto shadow-md"/>
+                <p class="text-center text-green-600 font-semibold mt-2 flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-sm">check_circle</span> Image ready for AI analysis
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Submit Button -->
+          <div class="pt-8 pb-16 flex justify-center">
+            <button onclick="submitClaim()" class="group relative flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-12 rounded-xl transition-all shadow-lg shadow-primary/20 w-full md:w-auto min-w-[320px]">
+              <span class="material-symbols-outlined">analytics</span>
+              <span class="text-lg">Analyze &amp; Predict Claim</span>
+              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="px-6 md:px-20 lg:px-40 py-8 border-t border-slate-200 bg-white">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+        <p>© 2024 InsureAI Systems. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a class="hover:text-primary" href="#">Privacy Policy</a>
+          <a class="hover:text-primary" href="#">Terms of Service</a>
+          <a class="hover:text-primary" href="#">Help Center</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: RESULTS ==================== -->
+<div id="page-result" class="page">
+  <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+    <!-- Header -->
+    <header class="flex items-center justify-between border-b border-solid border-primary/10 bg-white px-6 md:px-40 py-4">
+      <div class="flex items-center gap-3">
+        <div class="text-primary size-8">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold tracking-tight">InsureAI</h2>
+      </div>
+      <button onclick="showPage('page-home')" class="text-primary text-sm font-medium hover:underline flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">home</span> Home
+      </button>
+    </header>
+
+    <main class="flex-1 max-w-[960px] mx-auto w-full p-4 md:p-8 space-y-8">
+      <!-- Verdict Card -->
+      <div id="verdict-card" class="bg-white rounded-xl border border-green-200 overflow-hidden shadow-sm">
+        <div class="flex flex-col md:flex-row items-stretch">
+          <div id="verdict-bar" class="bg-green-500 w-full md:w-4 flex flex-shrink-0"></div>
+          <div class="p-6 flex flex-1 flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-1">
+              <span id="verdict-label" class="text-green-600 text-xs font-bold uppercase tracking-wider">Final Verdict</span>
+              <h1 id="verdict-text" class="text-3xl font-extrabold text-green-700">CLAIM APPROVED</h1>
+              <p id="verdict-sub" class="text-slate-custom text-sm">Automated assessment complete</p>
+            </div>
+            <div class="flex items-center gap-6">
+              <div class="relative size-24">
+                <svg class="size-full -rotate-90" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="stroke-current text-slate-200" cx="18" cy="18" fill="none" r="16" stroke-width="3"/>
+                  <circle id="progress-circle" class="stroke-current text-green-500" cx="18" cy="18" fill="none" r="16" stroke-dasharray="100" stroke-dashoffset="8" stroke-linecap="round" stroke-width="3"/>
+                </svg>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                  <span id="prob-text" class="text-xl font-bold text-navy-custom">92%</span>
+                  <span class="block text-[8px] uppercase font-semibold text-slate-custom">Confidence</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl border border-primary/10 shadow-sm flex flex-col justify-between">
+          <span class="text-slate-custom text-sm font-medium">Damage Severity</span>
+          <div class="mt-2">
+            <span id="severity-badge" class="px-3 py-1 bg-red-100 text-red-600 text-sm font-bold rounded-full">SEVERE</span>
+          </div>
+          <div class="mt-4 flex items-end gap-2">
+            <span id="damage-pct" class="text-2xl font-bold">75%</span>
+            <span class="text-sm text-slate-custom mb-1">Impact Scale</span>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-primary/10 shadow-sm flex flex-col justify-between">
+          <span class="text-slate-custom text-sm font-medium">Estimated Payout</span>
+          <div id="payout-amount" class="mt-2 text-3xl font-bold text-primary">₹--</div>
+          <div class="mt-4 text-xs text-slate-custom">Calculated based on standard market repair rates</div>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-primary/10 shadow-sm flex flex-col justify-between">
+          <span class="text-slate-custom text-sm font-medium">Processing Time</span>
+          <div class="mt-2 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">bolt</span>
+            <span id="proc-time" class="text-2xl font-bold">0.0s</span>
+          </div>
+          <div class="mt-4 text-xs text-slate-custom">Instant AI verification engine</div>
+        </div>
+      </div>
+
+      <!-- AI Visual Analysis -->
+      <div class="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-primary/10">
+          <h3 class="text-lg font-bold">AI Visual Assessment</h3>
+        </div>
+        <div class="p-6">
+          <div class="relative rounded-lg overflow-hidden group">
+            <img id="result-image" class="w-full h-auto object-cover max-h-[400px]" src="" alt="Damage photo"/>
+            <div class="absolute top-[25%] left-[20%] w-[45%] h-[40%] border-4 border-red-500 rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+              <span id="conf-label" class="absolute -top-8 left-0 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded">
+                DAMAGE_DETECTION [CONF: 0.92]
+              </span>
+            </div>
+            <div class="absolute bottom-4 right-4 bg-navy-custom/80 text-white text-[10px] px-3 py-1 rounded-full flex items-center gap-2">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              </span>
+              AI OVERLAY ACTIVE
+            </div>
+          </div>
+          <p id="damage-desc" class="mt-4 text-sm text-slate-custom">AI damage analysis result.</p>
+        </div>
+      </div>
+
+      <!-- Assessment Summary Table -->
+      <div class="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-primary/10">
+          <h3 class="text-lg font-bold">Claim Summary Details</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-background-light text-slate-custom">
+              <tr>
+                <th class="px-6 py-4 font-bold uppercase tracking-wider">Category</th>
+                <th class="px-6 py-4 font-bold uppercase tracking-wider">Information</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-primary/10">
+              <tr><td class="px-6 py-4 font-medium text-slate-custom">Policyholder</td><td id="sum-name" class="px-6 py-4">--</td></tr>
+              <tr><td class="px-6 py-4 font-medium text-slate-custom">Vehicle Info</td><td id="sum-vehicle" class="px-6 py-4">--</td></tr>
+              <tr><td class="px-6 py-4 font-medium text-slate-custom">Claim Probability</td><td id="sum-prob" class="px-6 py-4">--%</td></tr>
+              <tr><td class="px-6 py-4 font-medium text-slate-custom">Damage Score</td><td id="sum-score" class="px-6 py-4">--</td></tr>
+              <tr>
+                <td class="px-6 py-4 font-medium text-slate-custom">Coverage Status</td>
+                <td id="sum-status" class="px-6 py-4 text-green-600 font-semibold">Active Comprehensive</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Payout Breakdown -->
+      <div id="payout-breakdown" class="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden hidden">
+        <div class="p-6 border-b border-primary/10">
+          <h3 class="text-lg font-bold">💰 Payout Breakdown</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <tbody class="divide-y divide-primary/10">
+              <tr><td class="px-6 py-4 font-medium text-slate-custom">Insured Value</td><td id="insured-val" class="px-6 py-4 font-bold">₹--</td></tr>
+              <tr><td class="px-6 py-4 font-medium text-slate-custom">Raw Payout</td><td id="raw-payout" class="px-6 py-4">₹--</td></tr>
+              <tr><td class="px-6 py-4 font-medium text-slate-custom">Deductible (5%)</td><td id="deductible" class="px-6 py-4 text-red-500">-₹--</td></tr>
+              <tr><td class="px-6 py-4 font-bold">Final Payout</td><td id="final-payout" class="px-6 py-4 font-bold text-green-600 text-lg">₹--</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col md:flex-row gap-4 pt-4 pb-8">
+        <button onclick="resetForm()" class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined">add_circle</span>
+          Submit New Claim
+        </button>
+      </div>
+
+      <!-- Footer Note -->
+      <div class="text-center py-8">
+        <p class="text-slate-custom text-xs">
+          This is an automated AI assessment. Final settlement is subject to verification by an authorized surveyor.
+          <br/>© 2024 InsureAI Solutions. Licensed by IRDAI.
+        </p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loading" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl p-10 text-center shadow-2xl max-w-sm mx-4">
+    <div class="text-primary mb-4 flex justify-center">
+      <svg class="animate-spin h-12 w-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+      </svg>
+    </div>
+    <p class="text-xl font-bold text-navy-custom">AI Analyzing Claim...</p>
+    <p class="text-slate-custom mt-2 text-sm">Processing image and running prediction model</p>
+    <div class="mt-4 flex justify-center gap-2">
+      <div class="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+      <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay:0.2s"></div>
+      <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay:0.4s"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function previewImage(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('preview-img').src = e.target.result;
+      document.getElementById('result-image').src = e.target.result;
+      document.getElementById('image-preview').classList.remove('hidden');
+      document.getElementById('upload-area').classList.add('hidden');
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+async function submitClaim() {
+  const imageFile = document.getElementById('damage_image').files[0];
+  if (!imageFile) { alert('Please upload a vehicle damage photo!'); return; }
+
+  const formData = new FormData();
+  formData.append('name', document.getElementById('name').value || 'Customer');
+  formData.append('age', document.getElementById('age').value || 30);
+  formData.append('gender', document.getElementById('gender').value);
+  formData.append('driving_license', document.querySelector('input[name="driving_license"]:checked')?.value || 1);
+  formData.append('region_code', document.getElementById('region_code').value || 28);
+  formData.append('previously_insured', document.querySelector('input[name="previously_insured"]:checked')?.value || 0);
+  formData.append('vehicle_age', document.getElementById('vehicle_age').value);
+  formData.append('vehicle_damage', document.querySelector('input[name="vehicle_damage"]:checked')?.value || 0);
+  formData.append('annual_premium', document.getElementById('annual_premium').value || 35000);
+  formData.append('policy_sales_channel', document.getElementById('policy_sales_channel').value);
+  formData.append('vintage', document.getElementById('vintage').value || 150);
+  formData.append('damage_image', imageFile);
+
+  document.getElementById('loading').classList.remove('hidden');
+
+  try {
+    const res = await fetch('http://127.0.0.1:8000/assess-claim', { method: 'POST', body: formData });
+    const result = await res.json();
+    showResult(result);
+  } catch (e) {
+    alert('Error connecting to backend!\nMake sure uvicorn is running:\npython -m uvicorn main:app --reload');
+  }
+  document.getElementById('loading').classList.add('hidden');
+}
+
+function showResult(r) {
+  const approved = r.claim_approved;
+  const prob = r.claim_probability;
+
+  // Verdict
+  const verdictCard = document.getElementById('verdict-card');
+  verdictCard.className = `bg-white rounded-xl overflow-hidden shadow-sm border ${approved ? 'border-green-200' : 'border-red-200'}`;
+  document.getElementById('verdict-bar').className = `${approved ? 'bg-green-500' : 'bg-red-500'} w-full md:w-4 flex flex-shrink-0`;
+  document.getElementById('verdict-text').className = `text-3xl font-extrabold ${approved ? 'text-green-700' : 'text-red-700'}`;
+  document.getElementById('verdict-text').textContent = r.verdict;
+  document.getElementById('verdict-label').className = `${approved ? 'text-green-600' : 'text-red-600'} text-xs font-bold uppercase tracking-wider`;
+  document.getElementById('verdict-sub').textContent = `Assessment for ${r.name} · Policy ID: #IA-${Math.floor(Math.random()*90000+10000)}`;
+
+  // Progress circle
+  document.getElementById('prob-text').textContent = prob + '%';
+  document.getElementById('progress-circle').setAttribute('stroke-dashoffset', 100 - prob);
+  document.getElementById('progress-circle').className = `stroke-current ${approved ? 'text-green-500' : 'text-red-500'}`;
+
+  // Severity
+  const sev = r.damage_analysis.severity;
+  const sevColors = { MINOR: 'bg-green-100 text-green-600', MODERATE: 'bg-yellow-100 text-yellow-600', SEVERE: 'bg-red-100 text-red-600' };
+  document.getElementById('severity-badge').className = `px-3 py-1 text-sm font-bold rounded-full ${sevColors[sev] || 'bg-gray-100 text-gray-600'}`;
+  document.getElementById('severity-badge').textContent = sev;
+  document.getElementById('damage-pct').textContent = r.damage_analysis.damage_percent + '%';
+  document.getElementById('damage-desc').textContent = r.damage_analysis.description;
+  document.getElementById('conf-label').textContent = `DAMAGE_DETECTION [CONF: ${(r.damage_analysis.confidence/100).toFixed(2)}]`;
+
+  // Payout
+  const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+  if (approved && r.payout) {
+    document.getElementById('payout-amount').textContent = fmt(r.payout.final_payout);
+    document.getElementById('payout-breakdown').classList.remove('hidden');
+    document.getElementById('insured-val').textContent = fmt(r.payout.insured_value);
+    document.getElementById('raw-payout').textContent = fmt(r.payout.raw_payout);
+    document.getElementById('deductible').textContent = '-' + fmt(r.payout.deductible);
+    document.getElementById('final-payout').textContent = fmt(r.payout.final_payout);
+  } else {
+    document.getElementById('payout-amount').textContent = 'N/A - Claim Rejected';
+    document.getElementById('payout-breakdown').classList.add('hidden');
+  }
+
+  // Processing time
+  document.getElementById('proc-time').textContent = r.processing_time + 's';
+
+  // Summary table
+  const make = document.getElementById('vehicle_make').value || 'N/A';
+  const model = document.getElementById('vehicle_model').value || 'N/A';
+  document.getElementById('sum-name').textContent = r.name;
+  document.getElementById('sum-vehicle').textContent = `${make} ${model}`;
+  document.getElementById('sum-prob').textContent = prob + '%';
+  document.getElementById('sum-score').textContent = r.damage_analysis.damage_score + '/100';
+  document.getElementById('sum-status').textContent = approved ? '✅ Active Comprehensive' : '❌ Claim Rejected';
+  document.getElementById('sum-status').className = `px-6 py-4 font-semibold ${approved ? 'text-green-600' : 'text-red-600'}`;
+
+  showPage('page-result');
+}
+
+function resetForm() {
+  document.getElementById('damage_image').value = '';
+  document.getElementById('image-preview').classList.add('hidden');
+  document.getElementById('upload-area').classList.remove('hidden');
+  document.getElementById('payout-breakdown').classList.add('hidden');
+  showPage('page-form');
+}
+</script>
+</body>
+</html>
