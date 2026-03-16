@@ -385,7 +385,7 @@
 <!-- LOADING OVERLAY -->
 <div id="loading-overlay">
   <div class="spinner"></div>
-  <p>AI Analyzing Claim…</p>
+  <p id="loading-msg">AI Analyzing Claim…</p>
 </div>
 
 <!-- ══════════════════════════════ PAGE: HOME ══════════════════════════════ -->
@@ -703,7 +703,6 @@ function clearError() {
 async function submitClaim() {
   clearError();
 
-  // Basic validation
   const fullName = document.getElementById('fullName').value.trim();
   const age      = document.getElementById('age').value.trim();
   const premium  = document.getElementById('premium').value.trim();
@@ -712,74 +711,100 @@ async function submitClaim() {
   if (!age)      { showError('Please enter your age.'); return; }
   if (!premium)  { showError('Please enter your annual premium.'); return; }
 
-  // Collect form data
-  const payload = {
-    fullName,
-    age:           parseInt(age),
-    gender:        document.getElementById('gender').value,
-    phone:         document.getElementById('phone').value.trim(),
-    licence:       document.getElementById('licence').value.trim(),
-    licenceValid:  document.getElementById('licenceValid').value,
-    vehicleMake:   document.getElementById('vehicleMake').value.trim(),
-    vehicleModel:  document.getElementById('vehicleModel').value.trim(),
-    vehicleAge:    document.getElementById('vehicleAge').value,
-    annualPremium: parseFloat(premium),
-    regionCode:    document.getElementById('region').value.trim(),
-    vintage:       parseInt(document.getElementById('vintage').value) || 0,
-    channel:       document.getElementById('channel').value,
-    prevInsured:   document.getElementById('prevInsured').value,
-    damageHistory: document.getElementById('damageHistory').value,
-  };
-
-  // Show loading
-  const overlay = document.getElementById('loading-overlay');
+  const overlay    = document.getElementById('loading-overlay');
+  const loadingMsg = document.getElementById('loading-msg');
   overlay.classList.add('show');
   const t0 = Date.now();
 
   try {
-    let imageBase64 = null;
+    // ── STEP 1: Send image to /api/analyze (Groq vision) ─────────────────────
+    let damage = null;
+    let previewDataUrl = null;
+
     if (selectedFile) {
-      imageBase64 = await toBase64(selectedFile);
-      payload.imageBase64 = imageBase64;
+      loadingMsg.textContent = 'Detecting vehicle…';
+      const dataUrl = await readFileAsDataUrl(selectedFile);
+      previewDataUrl = dataUrl;
+
+      // Compress to max 512px before sending
+      const compressed = await compressImage(dataUrl, 512, 0.75);
+
+      loadingMsg.textContent = 'AI analysing damage…';
+      const analyzeRes = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: compressed }),
+      });
+
+      const analyzeData = await analyzeRes.json();
+
+      if (!analyzeRes.ok) {
+        const msg = analyzeData.error || '';
+        if (msg.includes('NO_CAR_DETECTED')) {
+          throw new Error('NO_CAR_DETECTED');
+        }
+        throw new Error(msg || `Image analysis failed (${analyzeRes.status})`);
+      }
+
+      damage = analyzeData;
     }
 
-    // ── CALL THE VERCEL SERVERLESS API ──────────────────────────────────────
-    const response = await fetch('/api/predict', {
+    // ── STEP 2: Send form data + damage numbers to /api/predict ──────────────
+    loadingMsg.textContent = 'Running claim prediction…';
+
+    const payload = {
+      fullName,
+      age:           parseInt(age),
+      gender:        document.getElementById('gender').value,
+      licenceValid:  document.getElementById('licenceValid').value,
+      vehicleMake:   document.getElementById('vehicleMake').value.trim(),
+      vehicleModel:  document.getElementById('vehicleModel').value.trim(),
+      vehicleAge:    document.getElementById('vehicleAge').value,
+      annualPremium: parseFloat(premium),
+      regionCode:    document.getElementById('region').value.trim(),
+      vintage:       parseInt(document.getElementById('vintage').value) || 0,
+      channel:       document.getElementById('channel').value,
+      prevInsured:   document.getElementById('prevInsured').value,
+      damageHistory: document.getElementById('damageHistory').value,
+      // Damage numbers from Groq AI (or fallback if no image)
+      damagePercent: damage ? damage.damage_percent : null,
+      severity:      damage ? damage.severity       : null,
+      aiConfidence:  damage ? damage.confidence     : null,
+      description:   damage ? damage.description    : null,
+    };
+
+    const predictRes = await fetch('/api/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || `Server error ${response.status}`);
+    if (!predictRes.ok) {
+      const e = await predictRes.json().catch(() => ({}));
+      throw new Error(e.error || `Prediction failed (${predictRes.status})`);
     }
 
-    const data = await response.json();
+    const data    = await predictRes.json();
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1) + 's';
 
-    // ── POPULATE RESULTS ────────────────────────────────────────────────────
+    // ── STEP 3: Populate results ──────────────────────────────────────────────
     const approved    = data.claim_approved ?? true;
-    const conf        = data.confidence ?? 0.92;
-    const damageScore = data.damage_score ?? 0.75;
+    const conf        = data.confidence ?? 0.75;
+    const damageScore = data.damage_score ?? 0.5;
     const severity    = data.severity ?? 'MODERATE';
+    const finalPayout = data.final_payout ?? 0;
     const rawPayout   = data.raw_payout ?? 0;
-    const insuredVal  = data.insured_value ?? (payload.annualPremium * 8);
-    const deductible  = rawPayout * 0.05;
-    const finalPayout = rawPayout - deductible;
+    const insuredVal  = data.insured_value ?? (parseFloat(premium) * 8);
+    const deductible  = data.deductible ?? 0;
     const claimProb   = data.claim_probability ?? Math.round(conf * 100);
 
-    // Update verdict badge colour & text
+    // Verdict badge
     const badge = document.querySelector('.verdict-badge');
     if (approved) {
-      badge.style.background = 'rgba(0,229,160,0.12)';
-      badge.style.borderColor = 'rgba(0,229,160,0.3)';
-      badge.style.color = 'var(--accent)';
+      badge.style.cssText = 'background:rgba(0,229,160,0.12);border-color:rgba(0,229,160,0.3);color:var(--accent)';
       badge.innerHTML = '<span class="material-icons-round" style="font-size:1rem">check_circle</span> CLAIM APPROVED';
     } else {
-      badge.style.background = 'rgba(255,77,109,0.12)';
-      badge.style.borderColor = 'rgba(255,77,109,0.3)';
-      badge.style.color = 'var(--danger)';
+      badge.style.cssText = 'background:rgba(255,77,109,0.12);border-color:rgba(255,77,109,0.3);color:var(--danger)';
       badge.innerHTML = '<span class="material-icons-round" style="font-size:1rem">cancel</span> CLAIM REJECTED';
     }
 
@@ -789,18 +814,23 @@ async function submitClaim() {
     document.getElementById('res-payout').textContent       = approved ? '₹' + fmt(finalPayout) : '₹0';
     document.getElementById('res-time').textContent         = elapsed;
     document.getElementById('res-name').textContent         = fullName;
-    document.getElementById('res-vehicle').textContent      = `${payload.vehicleMake} ${payload.vehicleModel}`.trim() || '—';
+    document.getElementById('res-vehicle').textContent      = (payload.vehicleMake + ' ' + payload.vehicleModel).trim() || '—';
     document.getElementById('res-prob').textContent         = claimProb + '%';
     document.getElementById('res-score').textContent        = damageScore.toFixed(2);
     document.getElementById('res-insured-val').textContent  = '₹' + fmt(insuredVal);
-    document.getElementById('res-raw-payout').textContent   = approved ? '₹' + fmt(rawPayout) : '₹0';
+    document.getElementById('res-raw-payout').textContent   = approved ? '₹' + fmt(rawPayout)   : '₹0';
     document.getElementById('res-deductible').textContent   = approved ? '−₹' + fmt(deductible) : '₹0';
     document.getElementById('res-final-payout').textContent = approved ? '₹' + fmt(finalPayout) : '₹0';
 
+    // Show damage description if available
+    if (data.description) {
+      document.querySelector('.damage-overlay').textContent = data.description;
+    }
+
     // Show uploaded image in result
-    if (imageBase64) {
+    if (previewDataUrl) {
       const imgEl = document.getElementById('res-img');
-      imgEl.src = imageBase64;
+      imgEl.src = previewDataUrl;
       imgEl.style.display = 'block';
       document.getElementById('res-img-placeholder').style.display = 'none';
     }
@@ -810,38 +840,45 @@ async function submitClaim() {
 
   } catch (err) {
     overlay.classList.remove('show');
-    showError('API error: ' + err.message + '. Check that /api/predict is deployed on Vercel.');
+    if (err.message === 'NO_CAR_DETECTED') {
+      showError('⚠️ No car detected in the image. Please upload a clear photo of the damaged vehicle.');
+    } else {
+      showError('Error: ' + err.message);
+    }
     console.error(err);
   }
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function toBase64(file) {
-  // Compress + resize before encoding to stay under Vercel's 4.5MB body limit
+// ── IMAGE HELPERS ─────────────────────────────────────────────────────────────
+function readFileAsDataUrl(file) {
   return new Promise((res, rej) => {
-    const reader = new FileReader();
-    reader.onerror = () => rej(new Error('File read failed'));
-    reader.onload = e => {
-      const img = new Image();
-      img.onerror = () => rej(new Error('Image load failed'));
-      img.onload = () => {
-        const MAX = 800;
-        let w = img.width, h = img.height;
-        if (w > MAX || h > MAX) {
-          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-          else       { w = Math.round(w * MAX / h); h = MAX; }
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        res(canvas.toDataURL('image/jpeg', 0.7));
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    const r = new FileReader();
+    r.onerror = () => rej(new Error('File read failed'));
+    r.onload  = e => res(e.target.result);
+    r.readAsDataURL(file);
   });
 }
 
+function compressImage(dataUrl, maxPx, quality) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onerror = () => rej(new Error('Image load failed'));
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxPx || h > maxPx) {
+        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+        else       { w = Math.round(w * maxPx / h); h = maxPx; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      res(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = dataUrl;
+  });
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 function fmt(n) {
   return Math.round(n).toLocaleString('en-IN');
 }
