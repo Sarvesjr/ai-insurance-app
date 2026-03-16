@@ -86,7 +86,7 @@ class handler(BaseHTTPRequestHandler):
         compressed = compress_image(img_b64)
 
         # 4. Build Gemini request
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={api_key}"
 
         gemini_payload = json.dumps({
             "contents": [{
