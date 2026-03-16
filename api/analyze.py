@@ -1,6 +1,6 @@
 """
 api/analyze.py  —  Vercel Serverless Function
-Calls OpenRouter vision API to detect car and analyse damage.
+Uses Google Gemini 2.0 Flash to detect car and analyse damage.
 POST /api/analyze
 Body: { "imageBase64": "data:image/jpeg;base64,..." }
 """
@@ -8,9 +8,6 @@ Body: { "imageBase64": "data:image/jpeg;base64,..." }
 from http.server import BaseHTTPRequestHandler
 import json, os, base64, io, urllib.request, urllib.error, traceback
 
-
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL   = "nvidia/nemotron-nano-12b-v2-vl:free"
 
 USER_PROMPT = """Look at this image carefully.
 
@@ -80,74 +77,65 @@ class handler(BaseHTTPRequestHandler):
         if not img_b64:
             return self._err(400, "imageBase64 is required")
 
-        # 2. Get API key
-        api_key = os.environ.get("OPENROUTER_API_KEY", "")
+        # 2. Get Gemini API key
+        api_key = os.environ.get("GEMINI_API_KEY", "")
         if not api_key:
-            return self._err(500, "OPENROUTER_API_KEY is not set in Vercel environment variables")
+            return self._err(500, "GEMINI_API_KEY is not set in Vercel environment variables")
 
         # 3. Compress image
         compressed = compress_image(img_b64)
 
-        # 4. Build OpenRouter request
-        or_payload = json.dumps({
-            "model": OPENROUTER_MODEL,
-            "max_tokens": 512,
-            "temperature": 0.1,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{compressed}"
-                            }
-                        },
-                        {
-                            "type": "text",
-                            "text": USER_PROMPT
+        # 4. Build Gemini request
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+
+        gemini_payload = json.dumps({
+            "contents": [{
+                "parts": [
+                    {
+                        "inline_data": {
+                            "mime_type": "image/jpeg",
+                            "data": compressed
                         }
-                    ]
-                }
-            ]
+                    },
+                    {
+                        "text": USER_PROMPT
+                    }
+                ]
+            }],
+            "generationConfig": {
+                "temperature": 0.1,
+                "maxOutputTokens": 512
+            }
         }).encode("utf-8")
 
-        # 5. Call OpenRouter
+        # 5. Call Gemini
         req = urllib.request.Request(
-            OPENROUTER_API_URL,
-            data=or_payload,
-            headers={
-                "Content-Type":  "application/json",
-                "Authorization": f"Bearer {api_key}",
-                "HTTP-Referer":  "https://ai-insurance-predictor-app.vercel.app",
-                "X-Title":       "InsureAI",
-            },
+            url,
+            data=gemini_payload,
+            headers={"Content-Type": "application/json"},
             method="POST"
         )
 
         try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                or_data = json.loads(resp.read())
+            with urllib.request.urlopen(req, timeout=9) as resp:
+                gemini_data = json.loads(resp.read())
         except urllib.error.HTTPError as e:
             body = e.read().decode()
-            return self._err(502, f"OpenRouter API error {e.code}: {body}")
+            return self._err(502, f"Gemini API error {e.code}: {body}")
         except Exception as e:
-            return self._err(502, f"OpenRouter request failed: {str(e)}")
+            return self._err(502, f"Gemini request failed: {str(e)}")
 
         # 6. Parse response
         try:
-            text = or_data["choices"][0]["message"]["content"].strip()
-            # Strip markdown fences
+            text = gemini_data["candidates"][0]["content"]["parts"][0]["text"].strip()
             text = text.replace("```json", "").replace("```", "").strip()
-            # Extract just the JSON object if there's surrounding text
             start = text.find("{")
             end   = text.rfind("}") + 1
             if start == -1 or end == 0:
-                return self._err(502, f"No JSON found in AI response: {text[:300]}")
-            text = text[start:end]
-            result = json.loads(text)
-        except json.JSONDecodeError as e:
-            return self._err(502, f"Invalid JSON from AI: {str(e)} | Raw: {text[:300]}")
+                return self._err(502, f"No JSON in Gemini response: {text[:300]}")
+            result = json.loads(text[start:end])
+        except Exception as e:
+            return self._err(502, f"Could not parse Gemini response: {str(e)}")
 
         # 7. No car detected
         if not result.get("car_detected", False):
