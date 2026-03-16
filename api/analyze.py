@@ -1,6 +1,6 @@
 """
 api/analyze.py  —  Vercel Serverless Function
-Calls Groq vision API to detect car and analyse damage.
+Calls OpenRouter vision API to detect car and analyse damage.
 POST /api/analyze
 Body: { "imageBase64": "data:image/jpeg;base64,..." }
 """
@@ -9,8 +9,8 @@ from http.server import BaseHTTPRequestHandler
 import json, os, base64, io, urllib.request, urllib.error, traceback
 
 
-GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL   = "meta-llama/llama-4-scout-17b-16e-instruct"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_MODEL   = "meta-llama/llama-4-scout:free"
 
 USER_PROMPT = """Look at this image carefully.
 
@@ -38,19 +38,15 @@ Reply with ONLY the JSON object. No markdown, no explanation, no extra text."""
 
 
 def compress_image(b64_string: str) -> str:
-    """Resize to max 512px and compress. Falls back to original if Pillow unavailable."""
     try:
         from PIL import Image
-        # Strip data-URI prefix
         raw = b64_string.split(",", 1)[1] if "," in b64_string else b64_string
         img = Image.open(io.BytesIO(base64.b64decode(raw))).convert("RGB")
         w, h = img.size
         MAX = 512
         if w > MAX or h > MAX:
-            if w > h:
-                h = round(h * MAX / w); w = MAX
-            else:
-                w = round(w * MAX / h); h = MAX
+            if w > h: h = round(h * MAX / w); w = MAX
+            else:     w = round(w * MAX / h); h = MAX
             img = img.resize((w, h), Image.LANCZOS)
         buf = io.BytesIO()
         img.save(buf, format="JPEG", quality=70)
@@ -72,9 +68,8 @@ class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             self._handle_post()
-        except Exception as e:
-            # Catch-all so we always return JSON, never HTML
-            self._err(500, f"Internal error: {traceback.format_exc()}")
+        except Exception:
+            self._err(500, traceback.format_exc())
 
     def _handle_post(self):
         # 1. Parse body
@@ -85,17 +80,17 @@ class handler(BaseHTTPRequestHandler):
         if not img_b64:
             return self._err(400, "imageBase64 is required")
 
-        # 2. Get Groq API key
-        api_key = os.environ.get("GROQ_API_KEY", "")
+        # 2. Get API key
+        api_key = os.environ.get("OPENROUTER_API_KEY", "")
         if not api_key:
-            return self._err(500, "GROQ_API_KEY environment variable is not set in Vercel")
+            return self._err(500, "OPENROUTER_API_KEY is not set in Vercel environment variables")
 
         # 3. Compress image
         compressed = compress_image(img_b64)
 
-        # 4. Build Groq request
-        groq_payload = json.dumps({
-            "model": GROQ_MODEL,
+        # 4. Build OpenRouter request
+        or_payload = json.dumps({
+            "model": OPENROUTER_MODEL,
             "max_tokens": 512,
             "temperature": 0.1,
             "messages": [
@@ -117,35 +112,37 @@ class handler(BaseHTTPRequestHandler):
             ]
         }).encode("utf-8")
 
-        # 5. Call Groq
+        # 5. Call OpenRouter
         req = urllib.request.Request(
-            GROQ_API_URL,
-            data=groq_payload,
+            OPENROUTER_API_URL,
+            data=or_payload,
             headers={
                 "Content-Type":  "application/json",
                 "Authorization": f"Bearer {api_key}",
+                "HTTP-Referer":  "https://ai-insurance-predictor-app.vercel.app",
+                "X-Title":       "InsureAI",
             },
             method="POST"
         )
 
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
-                groq_data = json.loads(resp.read())
+                or_data = json.loads(resp.read())
         except urllib.error.HTTPError as e:
             body = e.read().decode()
-            return self._err(502, f"Groq API error {e.code}: {body}")
+            return self._err(502, f"OpenRouter API error {e.code}: {body}")
         except Exception as e:
-            return self._err(502, f"Groq request failed: {str(e)}")
+            return self._err(502, f"OpenRouter request failed: {str(e)}")
 
-        # 6. Parse Groq response text
+        # 6. Parse response
         try:
-            text = groq_data["choices"][0]["message"]["content"].strip()
+            text = or_data["choices"][0]["message"]["content"].strip()
             text = text.replace("```json", "").replace("```", "").strip()
             result = json.loads(text)
         except Exception as e:
-            return self._err(502, f"Could not parse Groq response: {str(e)}")
+            return self._err(502, f"Could not parse AI response: {str(e)}")
 
-        # 7. Car not detected
+        # 7. No car detected
         if not result.get("car_detected", False):
             reason = result.get("reason", "No car found in image")
             return self._err(422, f"NO_CAR_DETECTED: {reason}")
@@ -160,7 +157,6 @@ class handler(BaseHTTPRequestHandler):
             "damaged_parts":  result.get("damaged_parts", []),
         })
 
-    # ── helpers ───────────────────────────────────────────────────────────────
     def _cors(self):
         self.send_header("Access-Control-Allow-Origin",  "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
