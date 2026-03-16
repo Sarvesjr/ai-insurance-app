@@ -1,473 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>InsureAI - AI-Powered Car Insurance</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #0a0c10;
-    --surface: #111318;
-    --border: rgba(255,255,255,0.07);
-    --accent: #00e5a0;
-    --accent2: #7b5ea7;
-    --text: #f0f2f5;
-    --muted: #6b7280;
-    --danger: #ff4d6d;
-    --warn: #fbbf24;
-    --card: #161b22;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ── PAGE SYSTEM ── */
-  .page { display: none; min-height: 100vh; }
-  .page.active { display: block; }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 2.5rem;
-    background: rgba(10,12,16,0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: 1.3rem;
-    color: var(--accent);
-    display: flex; align-items: center; gap: 0.5rem;
-    cursor: pointer;
-  }
-  .nav-links { display: flex; gap: 2rem; list-style: none; }
-  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color .2s; }
-  .nav-links a:hover { color: var(--text); }
-  .nav-cta {
-    background: var(--accent); color: #000;
-    border: none; padding: 0.55rem 1.3rem;
-    border-radius: 8px; font-weight: 600; font-size: 0.88rem;
-    cursor: pointer; transition: opacity .2s;
-  }
-  .nav-cta:hover { opacity: 0.85; }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 7rem 2rem 4rem;
-    position: relative; overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute; inset: 0; z-index: 0;
-    background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(0,229,160,0.08) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 40% at 80% 70%, rgba(123,94,167,0.1) 0%, transparent 60%);
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.25);
-    color: var(--accent); border-radius: 100px; padding: 0.35rem 1rem;
-    font-size: 0.8rem; font-weight: 500; margin-bottom: 1.5rem;
-    position: relative; z-index: 1;
-    animation: fadeUp 0.6s ease both;
-  }
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 800;
-    line-height: 1.1; margin-bottom: 1.2rem;
-    position: relative; z-index: 1;
-    animation: fadeUp 0.7s 0.1s ease both;
-  }
-  .hero h1 span { color: var(--accent); }
-  .hero p {
-    max-width: 520px; color: var(--muted); font-size: 1.05rem; line-height: 1.7;
-    margin-bottom: 2.2rem; position: relative; z-index: 1;
-    animation: fadeUp 0.7s 0.2s ease both;
-  }
-  .hero-btns {
-    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
-    position: relative; z-index: 1;
-    animation: fadeUp 0.7s 0.3s ease both;
-  }
-  .btn-primary {
-    background: var(--accent); color: #000;
-    border: none; padding: 0.8rem 2rem;
-    border-radius: 10px; font-weight: 700; font-size: 0.95rem;
-    cursor: pointer; transition: transform .2s, box-shadow .2s;
-    display: flex; align-items: center; gap: 0.4rem;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,160,0.3); }
-  .btn-ghost {
-    background: transparent; color: var(--text);
-    border: 1px solid var(--border); padding: 0.8rem 2rem;
-    border-radius: 10px; font-weight: 500; font-size: 0.95rem;
-    cursor: pointer; transition: border-color .2s;
-  }
-  .btn-ghost:hover { border-color: var(--muted); }
-  .hero-stat {
-    display: flex; gap: 3rem; margin-top: 3.5rem; justify-content: center;
-    position: relative; z-index: 1;
-    animation: fadeUp 0.7s 0.4s ease both;
-  }
-  .stat-item { text-align: center; }
-  .stat-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--text); }
-  .stat-lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
-
-  /* ── FEATURES ── */
-  .features {
-    padding: 5rem 2.5rem;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .section-label {
-    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em;
-    color: var(--accent); text-transform: uppercase; margin-bottom: 0.75rem;
-  }
-  .section-title {
-    font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-    font-weight: 800; margin-bottom: 3rem;
-  }
-  .features-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;
-  }
-  .feat-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 1.8rem;
-    transition: border-color .25s, transform .25s;
-  }
-  .feat-card:hover { border-color: rgba(0,229,160,0.3); transform: translateY(-3px); }
-  .feat-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: rgba(0,229,160,0.1); display: flex; align-items: center; justify-content: center;
-    color: var(--accent); margin-bottom: 1rem;
-  }
-  .feat-card h3 { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
-  .feat-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
-
-  /* ── CTA BANNER ── */
-  .cta-banner {
-    margin: 2rem 2.5rem 5rem;
-    background: linear-gradient(135deg, rgba(0,229,160,0.12), rgba(123,94,167,0.12));
-    border: 1px solid rgba(0,229,160,0.2);
-    border-radius: 20px; padding: 3rem 2.5rem;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
-    max-width: 1100px; margin-left: auto; margin-right: auto;
-  }
-  .cta-banner h2 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; }
-  .cta-banner p { color: var(--muted); margin-top: 0.4rem; font-size: 0.95rem; }
-
-  /* ── FORM PAGE ── */
-  .form-wrapper {
-    max-width: 760px; margin: 0 auto; padding: 7rem 2rem 4rem;
-  }
-  .form-header { margin-bottom: 2.5rem; }
-  .breadcrumb {
-    display: flex; align-items: center; gap: 0.5rem;
-    font-size: 0.82rem; color: var(--muted); margin-bottom: 1rem;
-    cursor: pointer;
-  }
-  .breadcrumb span { color: var(--accent); }
-  .form-header h2 { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; }
-  .form-header p { color: var(--muted); margin-top: 0.4rem; }
-
-  .form-section {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem;
-  }
-  .form-section-title {
-    display: flex; align-items: center; gap: 0.6rem;
-    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
-    color: var(--accent); margin-bottom: 1.5rem;
-  }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-  .form-group.full { grid-column: 1 / -1; }
-  label { font-size: 0.82rem; font-weight: 500; color: var(--muted); }
-  input, select {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 0.65rem 0.9rem;
-    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
-    transition: border-color .2s;
-    width: 100%;
-  }
-  input:focus, select:focus { outline: none; border-color: var(--accent); }
-  select option { background: var(--surface); }
-
-  /* Upload zone */
-  .upload-zone {
-    border: 2px dashed var(--border); border-radius: 14px;
-    padding: 2.5rem 1rem; text-align: center;
-    cursor: pointer; transition: border-color .2s, background .2s;
-    position: relative;
-  }
-  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: rgba(0,229,160,0.04); }
-  .upload-zone input[type=file] { display: none; }
-  .upload-icon { color: var(--muted); margin-bottom: 0.7rem; }
-  .upload-zone p { color: var(--muted); font-size: 0.88rem; }
-  .upload-zone strong { color: var(--text); }
-  #preview-wrap { display: none; margin-top: 1rem; }
-  #preview-wrap img { max-height: 200px; border-radius: 10px; border: 1px solid var(--border); }
-  .preview-label {
-    display: inline-flex; align-items: center; gap: 0.35rem;
-    color: var(--accent); font-size: 0.82rem; margin-top: 0.5rem;
-  }
-
-  .submit-btn {
-    width: 100%; padding: 1rem;
-    background: var(--accent); color: #000;
-    border: none; border-radius: 12px; font-weight: 700; font-size: 1rem;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    transition: opacity .2s, transform .2s;
-    font-family: 'Syne', sans-serif;
-  }
-  .submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  /* Loading overlay */
-  #loading-overlay {
-    display: none; position: fixed; inset: 0; z-index: 200;
-    background: rgba(10,12,16,0.92); backdrop-filter: blur(8px);
-    flex-direction: column; align-items: center; justify-content: center; gap: 1.2rem;
-  }
-  #loading-overlay.show { display: flex; }
-  .spinner {
-    width: 52px; height: 52px; border-radius: 50%;
-    border: 3px solid var(--border); border-top-color: var(--accent);
-    animation: spin 0.8s linear infinite;
-  }
-  #loading-overlay p { color: var(--muted); font-size: 0.95rem; }
-
-  /* Error banner */
-  .error-banner {
-    display: none; background: rgba(255,77,109,0.12); border: 1px solid rgba(255,77,109,0.3);
-    border-radius: 10px; padding: 1rem 1.2rem;
-    color: var(--danger); font-size: 0.88rem; margin-bottom: 1.2rem;
-    align-items: flex-start; gap: 0.6rem;
-  }
-  .error-banner.show { display: flex; }
-
-  /* ── RESULT PAGE ── */
-  .result-wrapper {
-    max-width: 820px; margin: 0 auto; padding: 7rem 2rem 5rem;
-  }
-  .result-header { margin-bottom: 2rem; }
-  .verdict-badge {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(0,229,160,0.12); border: 1px solid rgba(0,229,160,0.3);
-    color: var(--accent); border-radius: 100px; padding: 0.45rem 1.2rem;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
-    margin-bottom: 0.8rem;
-  }
-  .result-header h2 {
-    font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 0.3rem;
-  }
-  .result-header p { color: var(--muted); }
-
-  .metrics-row {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  .metric-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 1.4rem 1.2rem;
-  }
-  .metric-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
-  .metric-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--text); }
-  .metric-value.accent { color: var(--accent); }
-  .metric-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; }
-
-  .detail-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;
-  }
-  .detail-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 1.4rem;
-  }
-  .detail-card h4 {
-    font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700;
-    color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
-    margin-bottom: 1rem;
-  }
-  .info-row {
-    display: flex; justify-content: space-between;
-    padding: 0.55rem 0; border-bottom: 1px solid var(--border);
-    font-size: 0.88rem;
-  }
-  .info-row:last-child { border-bottom: none; }
-  .info-row span:first-child { color: var(--muted); }
-  .info-row span:last-child { font-weight: 500; }
-  .info-row.total span:last-child { color: var(--accent); font-size: 1rem; font-weight: 700; }
-
-  .damage-img-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 1.4rem; margin-bottom: 1.5rem;
-    grid-column: 1 / -1;
-  }
-  .damage-img-wrap {
-    position: relative; border-radius: 10px; overflow: hidden;
-    border: 1px solid var(--border); margin-top: 0.8rem;
-  }
-  .damage-img-wrap img { width: 100%; max-height: 300px; object-fit: cover; display: block; }
-  .damage-overlay {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-    padding: 1rem;
-    font-size: 0.7rem; font-family: 'DM Mono', monospace;
-    color: var(--accent); letter-spacing: 0.08em;
-  }
-
-  .result-actions {
-    display: flex; gap: 1rem; flex-wrap: wrap;
-  }
-  .btn-outline {
-    flex: 1; min-width: 160px;
-    background: transparent; color: var(--text);
-    border: 1px solid var(--border); padding: 0.85rem 1.5rem;
-    border-radius: 10px; font-weight: 500; font-size: 0.9rem;
-    cursor: pointer; transition: border-color .2s;
-    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-  }
-  .btn-outline:hover { border-color: var(--muted); }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border); padding: 2.5rem 2.5rem;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-  }
-  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--accent); }
-  footer p { color: var(--muted); font-size: 0.82rem; }
-  .footer-links { display: flex; gap: 1.5rem; }
-  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.82rem; }
-  .footer-links a:hover { color: var(--text); }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 640px) {
-    nav { padding: 1rem 1.2rem; }
-    .nav-links { display: none; }
-    .form-grid { grid-template-columns: 1fr; }
-    .detail-grid { grid-template-columns: 1fr; }
-    .hero-stat { gap: 1.5rem; }
-  }
+:root {
+  --bg:#0a0c10;--surface:#111318;--border:rgba(255,255,255,0.07);
+  --accent:#00e5a0;--text:#f0f2f5;--muted:#6b7280;--danger:#ff4d6d;--card:#161b22;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+.page{display:none;min-height:100vh;}.page.active{display:block;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(10,12,16,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--accent);display:flex;align-items:center;gap:0.5rem;cursor:pointer;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.9rem;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{background:var(--accent);color:#000;border:none;padding:0.55rem 1.3rem;border-radius:8px;font-weight:600;font-size:0.88rem;cursor:pointer;transition:opacity .2s;}
+.nav-cta:hover{opacity:0.85;}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 2rem 4rem;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(0,229,160,0.08) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 70%,rgba(123,94,167,0.1) 0%,transparent 60%);}
+.hero-badge{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.25);color:var(--accent);border-radius:100px;padding:0.35rem 1rem;font-size:0.8rem;font-weight:500;margin-bottom:1.5rem;position:relative;z-index:1;animation:fadeUp 0.6s ease both;}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.1;margin-bottom:1.2rem;position:relative;z-index:1;animation:fadeUp 0.7s 0.1s ease both;}
+.hero h1 span{color:var(--accent);}
+.hero p{max-width:520px;color:var(--muted);font-size:1.05rem;line-height:1.7;margin-bottom:2.2rem;position:relative;z-index:1;animation:fadeUp 0.7s 0.2s ease both;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;animation:fadeUp 0.7s 0.3s ease both;}
+.btn-primary{background:var(--accent);color:#000;border:none;padding:0.8rem 2rem;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:transform .2s,box-shadow .2s;display:flex;align-items:center;gap:0.4rem;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,160,0.3);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);padding:0.8rem 2rem;border-radius:10px;font-weight:500;font-size:0.95rem;cursor:pointer;transition:border-color .2s;}
+.btn-ghost:hover{border-color:var(--muted);}
+.hero-stat{display:flex;gap:3rem;margin-top:3.5rem;justify-content:center;position:relative;z-index:1;animation:fadeUp 0.7s 0.4s ease both;}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;}
+.stat-lbl{font-size:0.78rem;color:var(--muted);margin-top:0.2rem;}
+.features{padding:5rem 2.5rem;max-width:1100px;margin:0 auto;}
+.section-label{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;margin-bottom:0.75rem;}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;margin-bottom:3rem;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.8rem;transition:border-color .25s,transform .25s;}
+.feat-card:hover{border-color:rgba(0,229,160,0.3);transform:translateY(-3px);}
+.feat-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,229,160,0.1);display:flex;align-items:center;justify-content:center;color:var(--accent);margin-bottom:1rem;}
+.feat-card h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:0.6rem;}
+.feat-card p{color:var(--muted);font-size:0.9rem;line-height:1.65;}
+.cta-banner{background:linear-gradient(135deg,rgba(0,229,160,0.12),rgba(123,94,167,0.12));border:1px solid rgba(0,229,160,0.2);border-radius:20px;padding:3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;max-width:1100px;margin:0 auto 5rem;}
+.cta-banner h2{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;}
+.cta-banner p{color:var(--muted);margin-top:0.4rem;font-size:0.95rem;}
+.form-wrapper{max-width:760px;margin:0 auto;padding:7rem 2rem 4rem;}
+.form-header{margin-bottom:2.5rem;}
+.breadcrumb{display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;}
+.breadcrumb span{color:var(--accent);}
+.form-header h2{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;}
+.form-header p{color:var(--muted);margin-top:0.4rem;}
+.form-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem;}
+.form-section-title{display:flex;align-items:center;gap:0.6rem;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:1.5rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.form-group{display:flex;flex-direction:column;gap:0.4rem;}
+label{font-size:0.82rem;font-weight:500;color:var(--muted);}
+input,select{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.65rem 0.9rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;transition:border-color .2s;width:100%;}
+input:focus,select:focus{outline:none;border-color:var(--accent);}
+select option{background:var(--surface);}
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:2.5rem 1rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(0,229,160,0.04);}
+.upload-zone input[type=file]{display:none;}
+.upload-icon{color:var(--muted);margin-bottom:0.7rem;}
+.upload-zone p{color:var(--muted);font-size:0.88rem;}
+.upload-zone strong{color:var(--text);}
+#preview-wrap{display:none;margin-top:1rem;}
+#preview-wrap img{max-height:200px;border-radius:10px;border:1px solid var(--border);}
+.preview-label{display:inline-flex;align-items:center;gap:0.35rem;color:var(--accent);font-size:0.82rem;margin-top:0.5rem;}
+.submit-btn{width:100%;padding:1rem;background:var(--accent);color:#000;border:none;border-radius:12px;font-weight:700;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:opacity .2s,transform .2s;font-family:'Syne',sans-serif;}
+.submit-btn:hover{opacity:0.88;transform:translateY(-1px);}
+#loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(10,12,16,0.92);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;}
+#loading-overlay.show{display:flex;}
+.spinner{width:52px;height:52px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);animation:spin 0.8s linear infinite;}
+#loading-msg{color:var(--muted);font-size:0.95rem;}
+.error-banner{display:none;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.3);border-radius:10px;padding:1rem 1.2rem;color:var(--danger);font-size:0.88rem;margin-bottom:1.2rem;align-items:flex-start;gap:0.6rem;}
+.error-banner.show{display:flex;}
+.result-wrapper{max-width:820px;margin:0 auto;padding:7rem 2rem 5rem;}
+.result-header{margin-bottom:2rem;}
+.verdict-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);color:var(--accent);border-radius:100px;padding:0.45rem 1.2rem;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.8rem;}
+.result-header h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:0.3rem;}
+.result-header p{color:var(--muted);}
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.2rem;}
+.metric-label{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;}
+.metric-value{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;}
+.metric-value.accent{color:var(--accent);}
+.metric-sub{font-size:0.78rem;color:var(--muted);margin-top:0.25rem;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+.detail-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.4rem;}
+.detail-card h4{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;}
+.info-row{display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border);font-size:0.88rem;}
+.info-row:last-child{border-bottom:none;}
+.info-row span:first-child{color:var(--muted);}
+.info-row span:last-child{font-weight:500;}
+.info-row.total span:last-child{color:var(--accent);font-size:1rem;font-weight:700;}
+.damage-img-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1.5rem;}
+.damage-img-wrap{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-top:0.8rem;}
+.damage-img-wrap img{width:100%;max-height:300px;object-fit:cover;display:block;}
+.damage-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);padding:1rem;font-size:0.78rem;color:var(--accent);letter-spacing:0.06em;}
+.result-actions{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-outline{flex:1;min-width:160px;background:transparent;color:var(--text);border:1px solid var(--border);padding:0.85rem 1.5rem;border-radius:10px;font-weight:500;font-size:0.9rem;cursor:pointer;transition:border-color .2s;display:flex;align-items:center;justify-content:center;gap:0.4rem;}
+.btn-outline:hover{border-color:var(--muted);}
+footer{border-top:1px solid var(--border);padding:2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--accent);}
+footer p{color:var(--muted);font-size:0.82rem;}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:0.82rem;}
+.footer-links a:hover{color:var(--text);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:640px){nav{padding:1rem 1.2rem;}.nav-links{display:none;}.form-grid{grid-template-columns:1fr;}.detail-grid{grid-template-columns:1fr;}.hero-stat{gap:1.5rem;}}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo" onclick="showPage('home')">
-    <span class="material-icons-round" style="font-size:1.1rem">auto_awesome</span>
-    InsureAI
+    <span class="material-icons-round" style="font-size:1.1rem">auto_awesome</span>InsureAI
   </div>
   <ul class="nav-links">
-    <li><a href="#">Home</a></li>
-    <li><a href="#">Services</a></li>
-    <li><a href="#">About</a></li>
-    <li><a href="#">Contact</a></li>
+    <li><a href="#">Home</a></li><li><a href="#">Services</a></li>
+    <li><a href="#">About</a></li><li><a href="#">Contact</a></li>
   </ul>
   <button class="nav-cta" onclick="showPage('form')">Get Started</button>
 </nav>
 
-<!-- LOADING OVERLAY -->
 <div id="loading-overlay">
   <div class="spinner"></div>
   <p id="loading-msg">AI Analyzing Claim…</p>
 </div>
 
-<!-- ══════════════════════════════ PAGE: HOME ══════════════════════════════ -->
+<!-- HOME -->
 <div id="page-home" class="page active">
   <section class="hero">
     <div class="hero-bg"></div>
-    <div class="hero-badge"><span class="material-icons-round" style="font-size:0.9rem">bolt</span> Powered by Machine Learning</div>
+    <div class="hero-badge"><span class="material-icons-round" style="font-size:0.9rem">bolt</span> Powered by Gemini AI</div>
     <h1>AI-Powered Car<br><span>Insurance</span> Claim Assessment</h1>
-    <p>Upload damage photos and get instant claim predictions. No more waiting days for an adjuster.</p>
+    <p>Upload damage photos and get instant claim predictions powered by Google Gemini AI. No more waiting days for an adjuster.</p>
     <div class="hero-btns">
       <button class="btn-primary" onclick="showPage('form')">
-        <span class="material-icons-round" style="font-size:1rem">arrow_forward</span>
-        Start Claim Assessment
+        <span class="material-icons-round" style="font-size:1rem">arrow_forward</span>Start Claim Assessment
       </button>
       <button class="btn-ghost">How it Works</button>
     </div>
     <div class="hero-stat">
       <div class="stat-item"><div class="stat-num">10k+</div><div class="stat-lbl">Claims Processed</div></div>
       <div class="stat-item"><div class="stat-num">92%</div><div class="stat-lbl">Accuracy Rate</div></div>
-      <div class="stat-item"><div class="stat-num">&lt;2s</div><div class="stat-lbl">Avg. Response</div></div>
+      <div class="stat-item"><div class="stat-num">&lt;3s</div><div class="stat-lbl">Avg. Response</div></div>
     </div>
   </section>
-
   <section class="features">
     <div class="section-label">Features</div>
     <h2 class="section-title">Our Key Features</h2>
     <div class="features-grid">
-      <div class="feat-card">
-        <div class="feat-icon"><span class="material-icons-round">image_search</span></div>
-        <h3>AI Image Analysis</h3>
-        <p>Advanced algorithms analyze every pixel of damage, identifying dents, scratches, and structural issues with high accuracy.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon"><span class="material-icons-round">bolt</span></div>
-        <h3>Instant Prediction</h3>
-        <p>Get your estimated claim value in seconds. No more waiting weeks for traditional manual assessments.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon"><span class="material-icons-round">balance</span></div>
-        <h3>Fair Assessment</h3>
-        <p>Bias-free evaluations based on real-time market data and local labor rates for guaranteed fairness.</p>
-      </div>
+      <div class="feat-card"><div class="feat-icon"><span class="material-icons-round">image_search</span></div><h3>AI Image Analysis</h3><p>Google Gemini AI analyses every pixel of damage, identifying dents, scratches, and structural issues with high accuracy.</p></div>
+      <div class="feat-card"><div class="feat-icon"><span class="material-icons-round">bolt</span></div><h3>Instant Prediction</h3><p>Get your estimated claim value in seconds. No more waiting weeks for traditional manual assessments.</p></div>
+      <div class="feat-card"><div class="feat-icon"><span class="material-icons-round">balance</span></div><h3>Fair Assessment</h3><p>Bias-free evaluations based on real damage analysis and policy data for guaranteed fairness.</p></div>
     </div>
   </section>
-
   <div class="cta-banner">
-    <div>
-      <h2>Ready to assess your claim?</h2>
-      <p>Join thousands of users getting faster payouts and simpler insurance experiences today.</p>
-    </div>
-    <button class="btn-primary" onclick="showPage('form')">
-      <span class="material-icons-round" style="font-size:1rem">upload_file</span>
-      Start Now
-    </button>
+    <div><h2>Ready to assess your claim?</h2><p>Join thousands of users getting faster payouts and simpler insurance experiences today.</p></div>
+    <button class="btn-primary" onclick="showPage('form')"><span class="material-icons-round" style="font-size:1rem">upload_file</span>Start Now</button>
   </div>
-
   <footer>
-    <div>
-      <div class="footer-logo">InsureAI</div>
-      <p style="margin-top:0.3rem">© 2024 InsureAI. All rights reserved.</p>
-    </div>
-    <div class="footer-links">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-      <a href="#">Contact Support</a>
-    </div>
+    <div><div class="footer-logo">InsureAI</div><p style="margin-top:0.3rem">© 2024 InsureAI. All rights reserved.</p></div>
+    <div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Contact Support</a></div>
   </footer>
 </div>
 
-<!-- ══════════════════════════════ PAGE: FORM ══════════════════════════════ -->
+<!-- FORM -->
 <div id="page-form" class="page">
   <div class="form-wrapper">
     <div class="form-header">
       <div class="breadcrumb" onclick="showPage('home')">
         <span class="material-icons-round" style="font-size:1rem">arrow_back</span>
-        Back to Home
-        &nbsp;/&nbsp;<span>New Claim Assessment</span>
+        Back to Home &nbsp;/&nbsp;<span>New Claim Assessment</span>
       </div>
       <h2>Claim Assessment Form</h2>
-      <p>Complete the form below. Our AI engine will analyze the details and provide an instant damage prediction.</p>
+      <p>All fields marked * are required. Our AI engine will analyse the details and provide an instant prediction.</p>
     </div>
-
     <div id="error-banner" class="error-banner">
       <span class="material-icons-round" style="font-size:1.1rem;flex-shrink:0">error_outline</span>
       <span id="error-text">Something went wrong. Please try again.</span>
@@ -475,74 +191,155 @@
 
     <!-- Section A -->
     <div class="form-section">
-      <div class="form-section-title">
-        <span class="material-icons-round">person</span> Section A — Personal Details
-      </div>
+      <div class="form-section-title"><span class="material-icons-round">person</span> Section A — Personal Details</div>
       <div class="form-grid">
-        <div class="form-group"><label>Full Name</label><input type="text" id="fullName" placeholder="e.g. Sarves Srirangan"/></div>
-        <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="e.g. 28" min="18" max="99"/></div>
+        <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" required maxlength="100"/></div>
         <div class="form-group">
-          <label>Gender</label>
-          <select id="gender"><option value="Male">Male</option><option value="Female">Female</option></select>
+          <label>Age *</label>
+          <select id="age" required>
+            <option value="">— Select Age —</option>
+            <option value="18">18</option><option value="19">19</option><option value="20">20</option>
+            <option value="21">21</option><option value="22">22</option><option value="23">23</option>
+            <option value="24">24</option><option value="25">25</option><option value="26">26</option>
+            <option value="27">27</option><option value="28">28</option><option value="29">29</option>
+            <option value="30">30</option><option value="31">31</option><option value="32">32</option>
+            <option value="33">33</option><option value="34">34</option><option value="35">35</option>
+            <option value="36">36</option><option value="37">37</option><option value="38">38</option>
+            <option value="39">39</option><option value="40">40</option><option value="42">42</option>
+            <option value="44">44</option><option value="46">46</option><option value="48">48</option>
+            <option value="50">50</option><option value="52">52</option><option value="55">55</option>
+            <option value="58">58</option><option value="60">60</option><option value="65">65</option>
+          </select>
         </div>
-        <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="+91 00000 00000"/></div>
-        <div class="form-group"><label>Driving Licence Number</label><input type="text" id="licence" placeholder="DL-XXXXXXXXXXXX"/></div>
         <div class="form-group">
-          <label>Driving Licence Valid?</label>
-          <select id="licenceValid"><option value="Yes">Yes</option><option value="No">No</option></select>
+          <label>Gender *</label>
+          <select id="gender" required>
+            <option value="">— Select —</option>
+            <option value="Male">Male</option><option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Driving Licence Valid? *</label>
+          <select id="licenceValid" required>
+            <option value="">— Select —</option>
+            <option value="Yes">Yes</option><option value="No">No</option>
+          </select>
         </div>
       </div>
     </div>
 
     <!-- Section B -->
     <div class="form-section">
-      <div class="form-section-title">
-        <span class="material-icons-round">directions_car</span> Section B — Vehicle Details
-      </div>
+      <div class="form-section-title"><span class="material-icons-round">directions_car</span> Section B — Vehicle Details</div>
       <div class="form-grid">
-        <div class="form-group"><label>Vehicle Make</label><input type="text" id="vehicleMake" placeholder="e.g. Toyota"/></div>
-        <div class="form-group"><label>Vehicle Model</label><input type="text" id="vehicleModel" placeholder="e.g. Corolla"/></div>
         <div class="form-group">
-          <label>Vehicle Age</label>
-          <select id="vehicleAge">
+          <label>Vehicle Make *</label>
+          <select id="vehicleMake" required>
+            <option value="">— Select Make —</option>
+            <option>Maruti Suzuki</option><option>Hyundai</option><option>Tata</option>
+            <option>Mahindra</option><option>Honda</option><option>Toyota</option>
+            <option>Kia</option><option>Volkswagen</option><option>Skoda</option>
+            <option>Ford</option><option>Renault</option><option>Nissan</option>
+            <option>MG</option><option>Jeep</option><option>BMW</option>
+            <option>Mercedes-Benz</option><option>Audi</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Vehicle Model *</label><input type="text" id="vehicleModel" required maxlength="50"/></div>
+        <div class="form-group">
+          <label>Vehicle Age *</label>
+          <select id="vehicleAge" required>
+            <option value="">— Select —</option>
             <option value="< 1 Year">Less than 1 Year</option>
             <option value="1-2 Years">1–2 Years</option>
             <option value="> 2 Years">More than 2 Years</option>
           </select>
         </div>
-        <div class="form-group"><label>Annual Premium (₹)</label><input type="number" id="premium" placeholder="e.g. 45000"/></div>
-        <div class="form-group"><label>Region Code</label><input type="text" id="region" placeholder="e.g. 28"/></div>
-        <div class="form-group"><label>Vintage (Days with Company)</label><input type="number" id="vintage" placeholder="e.g. 200"/></div>
         <div class="form-group">
-          <label>Policy Sales Channel</label>
-          <select id="channel">
-            <option>Agent</option><option>Direct</option><option>Broker</option><option>Online</option>
+          <label>Annual Premium (₹) *</label>
+          <select id="premium" required>
+            <option value="">— Select Range —</option>
+            <option value="5000">Under ₹5,000</option>
+            <option value="10000">₹5,000 – ₹10,000</option>
+            <option value="20000">₹10,000 – ₹20,000</option>
+            <option value="30000">₹20,000 – ₹30,000</option>
+            <option value="40000">₹30,000 – ₹40,000</option>
+            <option value="50000">₹40,000 – ₹50,000</option>
+            <option value="75000">₹50,000 – ₹75,000</option>
+            <option value="100000">₹75,000 – ₹1,00,000</option>
+            <option value="150000">Above ₹1,00,000</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Previously Insured?</label>
-          <select id="prevInsured"><option value="Yes">Yes</option><option value="No">No</option></select>
+          <label>Region / State *</label>
+          <select id="region" required>
+            <option value="">— Select State —</option>
+            <option value="1">Andhra Pradesh</option><option value="2">Arunachal Pradesh</option>
+            <option value="3">Assam</option><option value="4">Bihar</option>
+            <option value="5">Chhattisgarh</option><option value="6">Goa</option>
+            <option value="7">Gujarat</option><option value="8">Haryana</option>
+            <option value="9">Himachal Pradesh</option><option value="10">Jharkhand</option>
+            <option value="11">Karnataka</option><option value="12">Kerala</option>
+            <option value="13">Madhya Pradesh</option><option value="14">Maharashtra</option>
+            <option value="15">Manipur</option><option value="16">Meghalaya</option>
+            <option value="17">Mizoram</option><option value="18">Nagaland</option>
+            <option value="19">Odisha</option><option value="20">Punjab</option>
+            <option value="21">Rajasthan</option><option value="22">Sikkim</option>
+            <option value="23">Tamil Nadu</option><option value="24">Telangana</option>
+            <option value="25">Tripura</option><option value="26">Uttar Pradesh</option>
+            <option value="27">Uttarakhand</option><option value="28">West Bengal</option>
+            <option value="29">Delhi</option>
+          </select>
         </div>
         <div class="form-group">
-          <label>Vehicle Damage History?</label>
-          <select id="damageHistory"><option value="Yes">Yes</option><option value="No">No</option></select>
+          <label>Time with Company *</label>
+          <select id="vintage" required>
+            <option value="">— Select —</option>
+            <option value="30">Less than 1 month</option>
+            <option value="90">1–3 months</option>
+            <option value="180">3–6 months</option>
+            <option value="270">6–9 months</option>
+            <option value="365">About 1 year</option>
+            <option value="548">1–2 years</option>
+            <option value="730">2+ years</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Policy Sales Channel *</label>
+          <select id="channel" required>
+            <option value="">— Select —</option>
+            <option value="Agent">Agent</option><option value="Direct">Direct</option>
+            <option value="Broker">Broker</option><option value="Online">Online</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Previously Insured? *</label>
+          <select id="prevInsured" required>
+            <option value="">— Select —</option>
+            <option value="Yes">Yes</option><option value="No">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Vehicle Damage History? *</label>
+          <select id="damageHistory" required>
+            <option value="">— Select —</option>
+            <option value="Yes">Yes</option><option value="No">No</option>
+          </select>
         </div>
       </div>
     </div>
 
     <!-- Section C -->
     <div class="form-section">
-      <div class="form-section-title">
-        <span class="material-icons-round">add_a_photo</span> Section C — Damage Evidence
-      </div>
-      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('imageInput').click()"
+      <div class="form-section-title"><span class="material-icons-round">add_a_photo</span> Section C — Damage Evidence *</div>
+      <div class="upload-zone" id="uploadZone"
+        onclick="document.getElementById('imageInput').click()"
         ondragover="event.preventDefault();this.classList.add('drag')"
         ondragleave="this.classList.remove('drag')"
         ondrop="handleDrop(event)">
-        <input type="file" id="imageInput" accept="image/*" onchange="handleImage(this)"/>
+        <input type="file" id="imageInput" accept="image/jpeg,image/png,image/jpg" onchange="handleImage(this)"/>
         <div class="upload-icon"><span class="material-icons-round" style="font-size:2.5rem">cloud_upload</span></div>
-        <p><strong>Click to upload</strong> or drag & drop</p>
-        <p style="margin-top:0.3rem;font-size:0.78rem">Supported formats: JPG, PNG (Max 5MB)</p>
+        <p><strong>Click to upload</strong> or drag &amp; drop</p>
+        <p style="margin-top:0.3rem;font-size:0.78rem">JPG or PNG only · Max 5MB · Must be a car photo</p>
         <div id="preview-wrap">
           <img id="preview-img" src="" alt="Preview"/>
           <div class="preview-label">
@@ -561,55 +358,33 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════ PAGE: RESULT ══════════════════════════════ -->
+<!-- RESULT -->
 <div id="page-result" class="page">
   <div class="result-wrapper">
     <div class="result-header">
       <div class="verdict-badge">
-        <span class="material-icons-round" style="font-size:1rem">check_circle</span>
-        CLAIM APPROVED
+        <span class="material-icons-round" style="font-size:1rem">check_circle</span> CLAIM APPROVED
       </div>
       <h2>Automated Assessment Complete</h2>
       <p>AI analysis finished — review your full report below.</p>
     </div>
-
     <div class="metrics-row">
-      <div class="metric-card">
-        <div class="metric-label">Confidence</div>
-        <div class="metric-value accent" id="res-confidence">—</div>
-        <div class="metric-sub">Prediction certainty</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Damage Severity</div>
-        <div class="metric-value" id="res-severity">—</div>
-        <div class="metric-sub" id="res-severity-pct">—</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Estimated Payout</div>
-        <div class="metric-value accent" id="res-payout">₹—</div>
-        <div class="metric-sub">After 5% deductible</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Processing Time</div>
-        <div class="metric-value" id="res-time">—</div>
-        <div class="metric-sub"><span class="material-icons-round" style="font-size:0.8rem;vertical-align:middle">bolt</span> Instant AI engine</div>
+      <div class="metric-card"><div class="metric-label">Confidence</div><div class="metric-value accent" id="res-confidence">—</div><div class="metric-sub">Prediction certainty</div></div>
+      <div class="metric-card"><div class="metric-label">Damage Severity</div><div class="metric-value" id="res-severity">—</div><div class="metric-sub" id="res-severity-pct">—</div></div>
+      <div class="metric-card"><div class="metric-label">Estimated Payout</div><div class="metric-value accent" id="res-payout">₹—</div><div class="metric-sub">After 5% deductible</div></div>
+      <div class="metric-card"><div class="metric-label">Processing Time</div><div class="metric-value" id="res-time">—</div><div class="metric-sub"><span class="material-icons-round" style="font-size:0.8rem;vertical-align:middle">bolt</span> Gemini AI engine</div></div>
+    </div>
+    <div class="damage-img-card">
+      <h4 style="font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem">AI Visual Assessment</h4>
+      <div class="damage-img-wrap">
+        <img id="res-img" src="" alt="Damage photo" style="display:none"/>
+        <div id="res-img-placeholder" style="height:160px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--muted)">
+          <span class="material-icons-round" style="font-size:3rem">broken_image</span>
+        </div>
+        <div class="damage-overlay" id="res-damage-desc">DAMAGE_DETECTION · AI OVERLAY ACTIVE</div>
       </div>
     </div>
-
     <div class="detail-grid">
-      <!-- Damage Photo -->
-      <div class="damage-img-card" style="grid-column:1/-1">
-        <h4 style="font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem">AI Visual Assessment</h4>
-        <div class="damage-img-wrap">
-          <img id="res-img" src="" alt="Damage photo" style="display:none"/>
-          <div style="height:160px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--muted)" id="res-img-placeholder">
-            <span class="material-icons-round" style="font-size:3rem">broken_image</span>
-          </div>
-          <div class="damage-overlay">DAMAGE_DETECTION [CONF: 0.92] · AI OVERLAY ACTIVE</div>
-        </div>
-      </div>
-
-      <!-- Claim Summary -->
       <div class="detail-card">
         <h4>Claim Summary</h4>
         <div class="info-row"><span>Policyholder</span><span id="res-name">—</span></div>
@@ -618,8 +393,6 @@
         <div class="info-row"><span>Damage Score</span><span id="res-score">—</span></div>
         <div class="info-row"><span>Coverage Status</span><span style="color:var(--accent)">Active Comprehensive</span></div>
       </div>
-
-      <!-- Payout Breakdown -->
       <div class="detail-card">
         <h4>Payout Breakdown</h4>
         <div class="info-row"><span>Insured Value</span><span id="res-insured-val">—</span></div>
@@ -628,22 +401,11 @@
         <div class="info-row total"><span>Final Payout</span><span id="res-final-payout">—</span></div>
       </div>
     </div>
-
     <div class="result-actions">
-      <button class="btn-primary" onclick="showPage('form')">
-        <span class="material-icons-round" style="font-size:1rem">add_circle</span>
-        Submit New Claim
-      </button>
-      <button class="btn-outline" onclick="window.print()">
-        <span class="material-icons-round" style="font-size:1rem">print</span>
-        Print Report
-      </button>
-      <button class="btn-outline" onclick="showPage('home')">
-        <span class="material-icons-round" style="font-size:1rem">home</span>
-        Back to Home
-      </button>
+      <button class="btn-primary" onclick="showPage('form')"><span class="material-icons-round" style="font-size:1rem">add_circle</span>Submit New Claim</button>
+      <button class="btn-outline" onclick="window.print()"><span class="material-icons-round" style="font-size:1rem">print</span>Print Report</button>
+      <button class="btn-outline" onclick="showPage('home')"><span class="material-icons-round" style="font-size:1rem">home</span>Back to Home</button>
     </div>
-
     <p style="margin-top:2rem;font-size:0.78rem;color:var(--muted);line-height:1.6">
       This is an automated AI assessment. Final settlement is subject to verification by an authorized surveyor.<br>
       © 2024 InsureAI Solutions. Licensed by IRDAI.
@@ -652,236 +414,217 @@
 </div>
 
 <script>
-// ── PAGE ROUTING ──────────────────────────────────────────────────────────────
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── IMAGE HANDLING ────────────────────────────────────────────────────────────
-let selectedFile = null;
+let selectedFile=null;
 
-function handleImage(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showError('Image must be under 5MB.'); return; }
-  selectedFile = file;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('preview-img').src = e.target.result;
-    document.getElementById('preview-wrap').style.display = 'block';
+function handleImage(input){
+  const file=input.files[0];
+  if(!file) return;
+  if(file.size>5*1024*1024){showError('Image must be under 5MB.');return;}
+  if(!['image/jpeg','image/jpg','image/png'].includes(file.type)){showError('Only JPG or PNG images are allowed.');return;}
+  selectedFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById('preview-img').src=e.target.result;
+    document.getElementById('preview-wrap').style.display='block';
   };
   reader.readAsDataURL(file);
 }
 
-function handleDrop(e) {
+function handleDrop(e){
   e.preventDefault();
   document.getElementById('uploadZone').classList.remove('drag');
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) {
-    const dt = new DataTransfer();
-    dt.items.add(file);
-    const input = document.getElementById('imageInput');
-    input.files = dt.files;
-    handleImage(input);
+  const file=e.dataTransfer.files[0];
+  if(file){
+    const dt=new DataTransfer();dt.items.add(file);
+    const input=document.getElementById('imageInput');
+    input.files=dt.files;handleImage(input);
   }
 }
 
-// ── ERROR HELPERS ─────────────────────────────────────────────────────────────
-function showError(msg) {
-  const el = document.getElementById('error-banner');
-  document.getElementById('error-text').textContent = msg;
+function showError(msg){
+  const el=document.getElementById('error-banner');
+  document.getElementById('error-text').textContent=msg;
   el.classList.add('show');
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.scrollIntoView({behavior:'smooth',block:'center'});
 }
-function clearError() {
-  document.getElementById('error-banner').classList.remove('show');
-}
+function clearError(){document.getElementById('error-banner').classList.remove('show');}
 
-// ── SUBMIT CLAIM ──────────────────────────────────────────────────────────────
-async function submitClaim() {
+async function submitClaim(){
   clearError();
+  const fullName=document.getElementById('fullName').value.trim();
+  const age     =document.getElementById('age').value;
+  const gender  =document.getElementById('gender').value;
+  const licValid=document.getElementById('licenceValid').value;
+  const vMake   =document.getElementById('vehicleMake').value;
+  const vModel  =document.getElementById('vehicleModel').value.trim();
+  const vAge    =document.getElementById('vehicleAge').value;
+  const premium =document.getElementById('premium').value;
+  const region  =document.getElementById('region').value;
+  const vintage =document.getElementById('vintage').value;
+  const channel =document.getElementById('channel').value;
+  const prevIns =document.getElementById('prevInsured').value;
+  const dmgHist =document.getElementById('damageHistory').value;
 
-  const fullName = document.getElementById('fullName').value.trim();
-  const age      = document.getElementById('age').value.trim();
-  const premium  = document.getElementById('premium').value.trim();
+  if(!fullName)    {showError('Full name is required.');return;}
+  if(!age)         {showError('Please select your age.');return;}
+  if(!gender)      {showError('Please select your gender.');return;}
+  if(!licValid)    {showError('Please select driving licence validity.');return;}
+  if(!vMake)       {showError('Please select vehicle make.');return;}
+  if(!vModel)      {showError('Vehicle model is required.');return;}
+  if(!vAge)        {showError('Please select vehicle age.');return;}
+  if(!premium)     {showError('Please select annual premium range.');return;}
+  if(!region)      {showError('Please select your region/state.');return;}
+  if(!vintage)     {showError('Please select time with company.');return;}
+  if(!channel)     {showError('Please select policy sales channel.');return;}
+  if(!prevIns)     {showError('Please select previously insured status.');return;}
+  if(!dmgHist)     {showError('Please select vehicle damage history.');return;}
+  if(!selectedFile){showError('Please upload a photo of the damaged vehicle.');return;}
 
-  if (!fullName) { showError('Please enter your full name.'); return; }
-  if (!age)      { showError('Please enter your age.'); return; }
-  if (!premium)  { showError('Please enter your annual premium.'); return; }
-
-  const overlay    = document.getElementById('loading-overlay');
-  const loadingMsg = document.getElementById('loading-msg');
+  const overlay=document.getElementById('loading-overlay');
+  const loadingMsg=document.getElementById('loading-msg');
   overlay.classList.add('show');
-  const t0 = Date.now();
+  const t0=Date.now();
 
   try {
-    // ── STEP 1: Send image to /api/analyze (Groq vision) ─────────────────────
-    let damage = null;
-    let previewDataUrl = null;
+    // STEP 1: Compress image and send to /api/analyze
+    loadingMsg.textContent='Detecting vehicle…';
+    const dataUrl=await readFileAsDataUrl(selectedFile);
+    const compressed=await compressImage(dataUrl,512,0.75);
 
-    if (selectedFile) {
-      loadingMsg.textContent = 'Detecting vehicle…';
-      const dataUrl = await readFileAsDataUrl(selectedFile);
-      previewDataUrl = dataUrl;
-
-      // Compress to max 512px before sending
-      const compressed = await compressImage(dataUrl, 512, 0.75);
-
-      loadingMsg.textContent = 'AI analysing damage…';
-      const analyzeRes = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: compressed }),
-      });
-
-      const analyzeData = await analyzeRes.json();
-
-      if (!analyzeRes.ok) {
-        const msg = analyzeData.error || '';
-        if (msg.includes('NO_CAR_DETECTED')) {
-          throw new Error('NO_CAR_DETECTED');
-        }
-        throw new Error(msg || `Image analysis failed (${analyzeRes.status})`);
-      }
-
-      damage = analyzeData;
-    }
-
-    // ── STEP 2: Send form data + damage numbers to /api/predict ──────────────
-    loadingMsg.textContent = 'Running claim prediction…';
-
-    const payload = {
-      fullName,
-      age:           parseInt(age),
-      gender:        document.getElementById('gender').value,
-      licenceValid:  document.getElementById('licenceValid').value,
-      vehicleMake:   document.getElementById('vehicleMake').value.trim(),
-      vehicleModel:  document.getElementById('vehicleModel').value.trim(),
-      vehicleAge:    document.getElementById('vehicleAge').value,
-      annualPremium: parseFloat(premium),
-      regionCode:    document.getElementById('region').value.trim(),
-      vintage:       parseInt(document.getElementById('vintage').value) || 0,
-      channel:       document.getElementById('channel').value,
-      prevInsured:   document.getElementById('prevInsured').value,
-      damageHistory: document.getElementById('damageHistory').value,
-      // Damage numbers from Groq AI (or fallback if no image)
-      damagePercent: damage ? damage.damage_percent : null,
-      severity:      damage ? damage.severity       : null,
-      aiConfidence:  damage ? damage.confidence     : null,
-      description:   damage ? damage.description    : null,
-    };
-
-    const predictRes = await fetch('/api/predict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+    loadingMsg.textContent='Gemini AI analysing damage…';
+    const analyzeRes=await fetch('/api/analyze',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({imageBase64:compressed}),
     });
 
-    if (!predictRes.ok) {
-      const e = await predictRes.json().catch(() => ({}));
-      throw new Error(e.error || `Prediction failed (${predictRes.status})`);
+    // Read as text first to avoid JSON parse crash on HTML error pages
+    const analyzeRaw=await analyzeRes.text();
+    let damage;
+    try{damage=JSON.parse(analyzeRaw);}
+    catch{throw new Error('Server returned an unexpected response. Please try again.');}
+
+    if(!analyzeRes.ok){
+      const msg=damage.error||'';
+      if(msg.includes('NO_CAR_DETECTED')) throw new Error('NO_CAR_DETECTED');
+      throw new Error('Image analysis failed: '+msg);
     }
 
-    const data    = await predictRes.json();
-    const elapsed = ((Date.now() - t0) / 1000).toFixed(1) + 's';
+    // STEP 2: Send form data + damage numbers to /api/predict
+    loadingMsg.textContent='Running claim prediction…';
+    const payload={
+      fullName,age:parseInt(age),gender,licenceValid:licValid,
+      vehicleMake:vMake,vehicleModel:vModel,vehicleAge:vAge,
+      annualPremium:parseFloat(premium),regionCode:parseInt(region),
+      vintage:parseInt(vintage),channel,prevInsured:prevIns,damageHistory:dmgHist,
+      damagePercent:damage.damage_percent,severity:damage.severity,
+      aiConfidence:damage.confidence,description:damage.description,
+    };
 
-    // ── STEP 3: Populate results ──────────────────────────────────────────────
-    const approved    = data.claim_approved ?? true;
-    const conf        = data.confidence ?? 0.75;
-    const damageScore = data.damage_score ?? 0.5;
-    const severity    = data.severity ?? 'MODERATE';
-    const finalPayout = data.final_payout ?? 0;
-    const rawPayout   = data.raw_payout ?? 0;
-    const insuredVal  = data.insured_value ?? (parseFloat(premium) * 8);
-    const deductible  = data.deductible ?? 0;
-    const claimProb   = data.claim_probability ?? Math.round(conf * 100);
+    const predictRes=await fetch('/api/predict',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+    });
 
-    // Verdict badge
-    const badge = document.querySelector('.verdict-badge');
-    if (approved) {
-      badge.style.cssText = 'background:rgba(0,229,160,0.12);border-color:rgba(0,229,160,0.3);color:var(--accent)';
-      badge.innerHTML = '<span class="material-icons-round" style="font-size:1rem">check_circle</span> CLAIM APPROVED';
-    } else {
-      badge.style.cssText = 'background:rgba(255,77,109,0.12);border-color:rgba(255,77,109,0.3);color:var(--danger)';
-      badge.innerHTML = '<span class="material-icons-round" style="font-size:1rem">cancel</span> CLAIM REJECTED';
+    const predictRaw=await predictRes.text();
+    let data;
+    try{data=JSON.parse(predictRaw);}
+    catch{throw new Error('Prediction server returned an unexpected response.');}
+
+    if(!predictRes.ok) throw new Error(data.error||`Prediction failed (${predictRes.status})`);
+
+    const elapsed=((Date.now()-t0)/1000).toFixed(1)+'s';
+
+    // STEP 3: Populate results
+    const approved   =data.claim_approved??true;
+    const conf       =data.confidence??0.75;
+    const damageScore=data.damage_score??0.5;
+    const severity   =data.severity??'MODERATE';
+    const finalPayout=data.final_payout??0;
+    const rawPayout  =data.raw_payout??0;
+    const insuredVal =data.insured_value??(parseFloat(premium)*8);
+    const deductible =data.deductible??0;
+    const claimProb  =data.claim_probability??Math.round(conf*100);
+
+    const badge=document.querySelector('.verdict-badge');
+    if(approved){
+      badge.style.cssText='background:rgba(0,229,160,0.12);border-color:rgba(0,229,160,0.3);color:var(--accent)';
+      badge.innerHTML='<span class="material-icons-round" style="font-size:1rem">check_circle</span> CLAIM APPROVED';
+    }else{
+      badge.style.cssText='background:rgba(255,77,109,0.12);border-color:rgba(255,77,109,0.3);color:var(--danger)';
+      badge.innerHTML='<span class="material-icons-round" style="font-size:1rem">cancel</span> CLAIM REJECTED';
     }
 
-    document.getElementById('res-confidence').textContent   = Math.round(conf * 100) + '%';
-    document.getElementById('res-severity').textContent     = severity;
-    document.getElementById('res-severity-pct').textContent = Math.round(damageScore * 100) + '% Impact Scale';
-    document.getElementById('res-payout').textContent       = approved ? '₹' + fmt(finalPayout) : '₹0';
-    document.getElementById('res-time').textContent         = elapsed;
-    document.getElementById('res-name').textContent         = fullName;
-    document.getElementById('res-vehicle').textContent      = (payload.vehicleMake + ' ' + payload.vehicleModel).trim() || '—';
-    document.getElementById('res-prob').textContent         = claimProb + '%';
-    document.getElementById('res-score').textContent        = damageScore.toFixed(2);
-    document.getElementById('res-insured-val').textContent  = '₹' + fmt(insuredVal);
-    document.getElementById('res-raw-payout').textContent   = approved ? '₹' + fmt(rawPayout)   : '₹0';
-    document.getElementById('res-deductible').textContent   = approved ? '−₹' + fmt(deductible) : '₹0';
-    document.getElementById('res-final-payout').textContent = approved ? '₹' + fmt(finalPayout) : '₹0';
+    document.getElementById('res-confidence').textContent  =Math.round(conf*100)+'%';
+    document.getElementById('res-severity').textContent    =severity;
+    document.getElementById('res-severity-pct').textContent=Math.round(damageScore*100)+'% Impact Scale';
+    document.getElementById('res-payout').textContent      =approved?'₹'+fmt(finalPayout):'₹0';
+    document.getElementById('res-time').textContent        =elapsed;
+    document.getElementById('res-name').textContent        =fullName;
+    document.getElementById('res-vehicle').textContent     =(vMake+' '+vModel).trim()||'—';
+    document.getElementById('res-prob').textContent        =claimProb+'%';
+    document.getElementById('res-score').textContent       =damageScore.toFixed(2);
+    document.getElementById('res-insured-val').textContent ='₹'+fmt(insuredVal);
+    document.getElementById('res-raw-payout').textContent  =approved?'₹'+fmt(rawPayout):'₹0';
+    document.getElementById('res-deductible').textContent  =approved?'−₹'+fmt(deductible):'₹0';
+    document.getElementById('res-final-payout').textContent=approved?'₹'+fmt(finalPayout):'₹0';
 
-    // Show damage description if available
-    if (data.description) {
-      document.querySelector('.damage-overlay').textContent = data.description;
-    }
+    if(data.description) document.getElementById('res-damage-desc').textContent=data.description;
 
-    // Show uploaded image in result
-    if (previewDataUrl) {
-      const imgEl = document.getElementById('res-img');
-      imgEl.src = previewDataUrl;
-      imgEl.style.display = 'block';
-      document.getElementById('res-img-placeholder').style.display = 'none';
-    }
+    const imgEl=document.getElementById('res-img');
+    imgEl.src=dataUrl;imgEl.style.display='block';
+    document.getElementById('res-img-placeholder').style.display='none';
 
     overlay.classList.remove('show');
     showPage('result');
 
-  } catch (err) {
+  } catch(err){
     overlay.classList.remove('show');
-    if (err.message === 'NO_CAR_DETECTED') {
+    if(err.message==='NO_CAR_DETECTED'){
       showError('⚠️ No car detected in the image. Please upload a clear photo of the damaged vehicle.');
-    } else {
-      showError('Error: ' + err.message);
+    }else{
+      showError('Error: '+err.message);
     }
     console.error(err);
   }
 }
 
-// ── IMAGE HELPERS ─────────────────────────────────────────────────────────────
-function readFileAsDataUrl(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onerror = () => rej(new Error('File read failed'));
-    r.onload  = e => res(e.target.result);
+function readFileAsDataUrl(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onerror=()=>rej(new Error('File read failed'));
+    r.onload=e=>res(e.target.result);
     r.readAsDataURL(file);
   });
 }
 
-function compressImage(dataUrl, maxPx, quality) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.onerror = () => rej(new Error('Image load failed'));
-    img.onload = () => {
-      let w = img.width, h = img.height;
-      if (w > maxPx || h > maxPx) {
-        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
-        else       { w = Math.round(w * maxPx / h); h = maxPx; }
+function compressImage(dataUrl,maxPx,quality){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onerror=()=>rej(new Error('Image load failed'));
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>maxPx||h>maxPx){
+        if(w>h){h=Math.round(h*maxPx/w);w=maxPx;}
+        else{w=Math.round(w*maxPx/h);h=maxPx;}
       }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      res(canvas.toDataURL('image/jpeg', quality));
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      res(canvas.toDataURL('image/jpeg',quality));
     };
-    img.src = dataUrl;
+    img.src=dataUrl;
   });
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function fmt(n) {
-  return Math.round(n).toLocaleString('en-IN');
-}
+function fmt(n){return Math.round(n).toLocaleString('en-IN');}
 </script>
 </body>
 </html>
