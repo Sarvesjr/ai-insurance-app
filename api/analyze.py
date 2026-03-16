@@ -10,7 +10,7 @@ import json, os, base64, io, urllib.request, urllib.error, traceback
 
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL   = "qwen/qwen2.5-vl-72b-instruct:free"
+OPENROUTER_MODEL   = "nvidia/nemotron-nano-12b-v2-vl:free"
 
 USER_PROMPT = """Look at this image carefully.
 
