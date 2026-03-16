@@ -492,29 +492,14 @@ async function submitClaim(){
   const t0=Date.now();
 
   try {
-    // STEP 1: Compress image and send to /api/analyze
+    // STEP 1: Analyse image directly from browser via OpenRouter (no server timeout)
     loadingMsg.textContent='Detecting vehicle…';
     const dataUrl=await readFileAsDataUrl(selectedFile);
     const compressed=await compressImage(dataUrl,512,0.75);
+    const compressedBase64=compressed.split(',')[1];
 
-    loadingMsg.textContent='Gemini AI analysing damage…';
-    const analyzeRes=await fetch('/api/analyze',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({imageBase64:compressed}),
-    });
-
-    // Read as text first to avoid JSON parse crash on HTML error pages
-    const analyzeRaw=await analyzeRes.text();
-    let damage;
-    try{damage=JSON.parse(analyzeRaw);}
-    catch{throw new Error('Server returned an unexpected response. Please try again.');}
-
-    if(!analyzeRes.ok){
-      const msg=damage.error||'';
-      if(msg.includes('NO_CAR_DETECTED')) throw new Error('NO_CAR_DETECTED');
-      throw new Error('Image analysis failed: '+msg);
-    }
+    loadingMsg.textContent='AI analysing damage…';
+    const damage = await analyzeWithOpenRouter(compressedBase64);
 
     // STEP 2: Send form data + damage numbers to /api/predict
     loadingMsg.textContent='Running claim prediction…';
@@ -594,6 +579,78 @@ async function submitClaim(){
     }
     console.error(err);
   }
+}
+
+// ── OPENROUTER VISION (called directly from browser) ─────────────────────────
+const OPENROUTER_KEY   = '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';
+const OPENROUTER_MODEL = 'nvidia/nemotron-nano-12b-v2-vl:free';
+
+async function analyzeWithOpenRouter(base64Image) {
+  const prompt = `Look at this image carefully.
+
+First: does this image contain a car or any vehicle?
+
+If NO car or vehicle is present, respond with ONLY this JSON:
+{"car_detected": false, "reason": "describe what you see instead"}
+
+If a car IS present, assess all visible damage and respond with ONLY this JSON:
+{
+  "car_detected": true,
+  "damage_percent": <integer 0-95>,
+  "severity": "<MINOR|MODERATE|SEVERE>",
+  "confidence": <float 0.0-1.0>,
+  "description": "<one sentence describing the damage>",
+  "damaged_parts": ["e.g. front bumper", "hood"]
+}
+
+Severity: MINOR < 25%, MODERATE 25-60%, SEVERE > 60%.
+Reply with ONLY the JSON. No markdown, no explanation.`;
+
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type':  'application/json',
+      'Authorization': `Bearer ${OPENROUTER_KEY}`,
+      'HTTP-Referer':  'https://ai-insurance-predictor-app.vercel.app',
+      'X-Title':       'InsureAI',
+    },
+    body: JSON.stringify({
+      model: OPENROUTER_MODEL,
+      max_tokens: 512,
+      temperature: 0.1,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Image}` } },
+          { type: 'text', text: prompt }
+        ]
+      }]
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error('AI vision error: ' + (err.error?.message || res.status));
+  }
+
+  const data = await res.json();
+  let text = data.choices[0].message.content.trim();
+  text = text.replace(/```json|```/g, '').trim();
+  const start = text.indexOf('{');
+  const end   = text.lastIndexOf('}') + 1;
+  if (start === -1) throw new Error('Could not parse AI response. Please try again.');
+
+  const result = JSON.parse(text.slice(start, end));
+
+  if (!result.car_detected) throw new Error('NO_CAR_DETECTED');
+
+  return {
+    damage_percent: result.damage_percent || 50,
+    severity:       result.severity || 'MODERATE',
+    confidence:     result.confidence || 0.85,
+    description:    result.description || '',
+    damaged_parts:  result.damaged_parts || [],
+  };
 }
 
 function readFileAsDataUrl(file){
