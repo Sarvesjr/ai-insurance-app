@@ -137,10 +137,17 @@ class handler(BaseHTTPRequestHandler):
         # 6. Parse response
         try:
             text = or_data["choices"][0]["message"]["content"].strip()
+            # Strip markdown fences
             text = text.replace("```json", "").replace("```", "").strip()
+            # Extract just the JSON object if there's surrounding text
+            start = text.find("{")
+            end   = text.rfind("}") + 1
+            if start == -1 or end == 0:
+                return self._err(502, f"No JSON found in AI response: {text[:300]}")
+            text = text[start:end]
             result = json.loads(text)
-        except Exception as e:
-            return self._err(502, f"Could not parse AI response: {str(e)}")
+        except json.JSONDecodeError as e:
+            return self._err(502, f"Invalid JSON from AI: {str(e)} | Raw: {text[:300]}")
 
         # 7. No car detected
         if not result.get("car_detected", False):
